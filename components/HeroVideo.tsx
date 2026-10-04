@@ -15,7 +15,7 @@ interface HeroVideoProps {
 }
 
 export default function HeroVideo({
-  src,
+  src = "/videos/VID-20260903-WA0005.mp4",
   poster = "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1920&q=85",
   title = "WILD PLACES.\nREAL MOMENTS.",
   eyebrow = "WILDLIFE PHOTOGRAPHY SAFARIS",
@@ -137,6 +137,15 @@ export default function HeroVideo({
     setVideoCompleted(true);
   };
 
+  const handleTimeUpdate = () => {
+    const video = videoRef.current;
+    if (!video || !video.duration) return;
+    if (video.currentTime >= video.duration - 0.2) {
+      video.pause();
+      setVideoCompleted(true);
+    }
+  };
+
   return (
     /* HERO SCROLL TRACK (Sticky locked section while video plays on scroll) */
     <section
@@ -165,6 +174,7 @@ export default function HeroVideo({
             playsInline
             preload="auto"
             onEnded={handleVideoEnded}
+            onTimeUpdate={handleTimeUpdate}
             onError={() => setHasError(true)}
             className={`w-full h-full object-cover transition-opacity duration-500 ${
               hasError ? "opacity-0" : "opacity-100"

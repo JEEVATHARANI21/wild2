@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import ToeholdNavbar from "@/src/components/toehold/ToeholdNavbar";
 import HeroVideo from "@/components/HeroVideo";
+import IntroSection from "@/components/IntroSection";
 import TourCatalog from "@/src/components/toehold/TourCatalog";
 import FoundersSection from "@/src/components/toehold/FoundersSection";
 import Testimonials from "@/src/components/toehold/Testimonials";
@@ -160,10 +161,10 @@ function MainApp() {
 
       {currentView === "home" && (
         <main>
-          {/* 1. HEROIC SCROLL-LOCKED HERO VIDEO WITH HORNBILL FLIGHT */}
+          {/* 1. HEROIC SCROLL-LOCKED HERO VIDEO */}
           <HeroVideo
-            src="/videos/hornbill.mp4"
-            poster="https://images.unsplash.com/photo-1522926193341-e9ffd686c60f?auto=format&fit=crop&w=1920&q=85"
+            src="/videos/VID-20260903-WA0005.mp4"
+            poster="https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1920&q=85"
             eyebrow="THE PINNACLE OF WILDLIFE PHOTOGRAPHY"
             title={"Bespoke Photographic\nExpeditions"}
             description="Masterclass field tracking, intimate vehicular limits (max 4 per Gypsy), and deep animal behavior anticipation with expedition mentors across India & Africa’s wildest national parks."
@@ -172,7 +173,10 @@ function MainApp() {
             onPrimaryCtaClick={() => setPlanTripModalOpen(true)}
           />
 
-          {/* 2. Founder Section from D:\wildlife */}
+          {/* 2. Philosophy & Intro Section */}
+          <IntroSection />
+
+          {/* 3. Founder Section */}
           <FoundersSection
             founders={content?.founders || TOURS_DATA.founders}
             onViewFullAbout={() => navigateTo("about")}

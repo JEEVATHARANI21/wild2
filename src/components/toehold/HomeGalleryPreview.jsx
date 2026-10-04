@@ -142,27 +142,12 @@ export default function HomeGalleryPreview({ onViewFullGallery, onNavigateToGall
               <span>←</span>
               <span>Back to Gallery</span>
             </button>
-
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="px-4 py-2 rounded-full bg-[#151815] border border-[#242923] hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#D6A85C] text-xs font-sans font-medium transition-all cursor-pointer"
-              title="Close (Go Back)"
-            >
-              ✕ Close
-            </button>
           </div>
 
           <div
             className="relative max-w-5xl w-full bg-[#0d100d] border border-[#242923] rounded-3xl overflow-hidden shadow-2xl my-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-[#080908]/80 border border-[#ffffff]/20 text-[#F2F0E8] hover:text-[#D6A85C] flex items-center justify-center text-xl transition-all cursor-pointer"
-            >
-              ✕
-            </button>
 
             <div className="flex flex-col lg:flex-row">
               {/* Full Image Display */}

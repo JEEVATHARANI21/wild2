@@ -345,14 +345,6 @@ export default function DnaCarousel({
                 <h3 className="font-serif text-xl md:text-3xl text-[#F2F0E8] leading-tight">{items[lightboxIndex].title}</h3>
               </div>
             </div>
-
-            <button
-              onClick={() => setLightboxIndex(null)}
-              className="p-3 rounded-full bg-white/10 hover:bg-[#D6A85C] hover:text-[#080908] transition-colors cursor-pointer self-end sm:self-auto"
-              title="Back to Gallery (Close)"
-            >
-              <X className="w-6 h-6" />
-            </button>
           </div>
 
           {/* Main Image View */}

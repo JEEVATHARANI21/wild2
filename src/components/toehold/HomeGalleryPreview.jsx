@@ -55,33 +55,8 @@ export default function HomeGalleryPreview({ onViewFullGallery, onNavigateToGall
             </h2>
           </div>
 
-          {/* Category Filter Tabs, DNA Mode Toggle & CTA */}
+          {/* Category Filter Tabs & CTA */}
           <div className="flex flex-wrap items-center gap-3">
-            
-            {/* View Mode Switcher: DNA Helix vs Grid */}
-            <div className="inline-flex items-center p-1 rounded-full bg-[#121512] border border-[#242923]">
-              <button
-                onClick={() => setGalleryViewMode('dna')}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-sans uppercase tracking-wider transition-all duration-300 cursor-pointer flex items-center gap-1.5 ${
-                  galleryViewMode === 'dna'
-                    ? 'bg-[#B87333] text-[#080908] font-bold shadow-md'
-                    : 'text-[#A7A59B] hover:text-[#F2F0E8]'
-                }`}
-              >
-                <span>🧬 DNA HELIX</span>
-              </button>
-              <button
-                onClick={() => setGalleryViewMode('grid')}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-sans uppercase tracking-wider transition-all duration-300 cursor-pointer flex items-center gap-1.5 ${
-                  galleryViewMode === 'grid'
-                    ? 'bg-[#B87333] text-[#080908] font-bold shadow-md'
-                    : 'text-[#A7A59B] hover:text-[#F2F0E8]'
-                }`}
-              >
-                <span>🔳 GRID</span>
-              </button>
-            </div>
-
             {/* Species Filter Tabs */}
             <div className="inline-flex items-center p-1 rounded-full bg-[#121512] border border-[#242923]">
               <button
@@ -126,69 +101,10 @@ export default function HomeGalleryPreview({ onViewFullGallery, onNavigateToGall
           </div>
         </div>
 
-        {/* MODE 1: DNA HELIX CAROUSEL */}
-        {galleryViewMode === 'dna' ? (
-          <div className="w-full relative">
-            <DnaCarousel items={dnaItems} />
-          </div>
-        ) : (
-          /* MODE 2: 2D Responsive Image Grid */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6 animate-fadeIn">
-            {filteredImages.map((item, idx) => (
-              <div
-                key={item.id || idx}
-                onClick={() => setSelectedImage(item)}
-                className="group relative rounded-2xl overflow-hidden bg-[#111411] border border-[#20251f] hover:border-[#D6A85C]/60 transition-all duration-500 cursor-pointer shadow-lg hover:shadow-[0_15px_35px_rgba(0,0,0,0.7)] flex flex-col"
-              >
-                {/* Image Container */}
-                <div className="relative aspect-[4/3] sm:aspect-[3/4] w-full overflow-hidden bg-[#080908]">
-                  <img
-                    src={item.src}
-                    alt={item.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-700 ease-out"
-                  />
-
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#080908] via-[#080908]/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-300" />
-
-                  {/* Category Badge */}
-                  <div className="absolute top-3 left-3 z-10 flex items-center gap-2">
-                    <span className="px-2.5 py-1 rounded-full bg-[#080908]/80 backdrop-blur-md border border-[#D6A85C]/40 text-[#D6A85C] text-[9.5px] font-sans tracking-widest uppercase font-bold shadow-md">
-                      {item.category}
-                    </span>
-                  </div>
-
-                  {/* Inspect Icon */}
-                  <div className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-[#080908]/70 backdrop-blur-md border border-[#ffffff]/20 text-[#F2F0E8] flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300 shadow-xl">
-                    <span className="text-sm">🔍</span>
-                  </div>
-
-                  {/* Bottom Text */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-                    <span className="text-[10px] font-sans text-[#D6A85C] tracking-wider uppercase block mb-0.5">
-                      📍 {item.location}
-                    </span>
-                    <h3 className="font-serif text-lg text-[#F2F0E8] font-light leading-snug group-hover:text-[#D6A85C] transition-colors duration-300">
-                      {item.title}
-                    </h3>
-                  </div>
-                </div>
-
-                {/* Card Footer Details */}
-                <div className="p-4 bg-[#0e110e] border-t border-[#1e231d] flex flex-col justify-between flex-1">
-                  <p className="font-sans text-xs text-[#A7A59B] italic line-clamp-1">
-                    {item.species}
-                  </p>
-
-                  <div className="mt-2 pt-2 border-t border-[#181c17] flex items-center justify-end text-[10px] text-[#A7A59B] font-mono">
-                    <span className="text-[#D6A85C] group-hover:underline">Inspect Photo →</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        {/* DNA HELIX CAROUSEL */}
+        <div className="w-full relative">
+          <DnaCarousel items={dnaItems} />
+        </div>
 
         {/* Bottom Full Gallery CTA Bar */}
         <div className="mt-12 sm:mt-16 p-8 rounded-3xl bg-[#0e120f] border border-[#20251f] flex flex-col sm:flex-row items-center justify-between gap-6 shadow-2xl">

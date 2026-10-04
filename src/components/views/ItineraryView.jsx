@@ -116,7 +116,7 @@ export default function ItineraryView({ tour, onBack, onPlanTrip, openLegal }) {
   return (
     <div className="min-h-screen bg-[#080908] text-[#F2F0E8] pt-20 pb-24 select-none">
       {/* Top Back Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-12 py-4 flex items-center justify-between border-b border-[#242923]">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-12 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#242923]">
         <button
           onClick={onBack}
           className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-widest px-4 py-2 rounded-full bg-[#151815] border border-[#D6A85C]/60 text-[#D6A85C] hover:bg-[#D6A85C] hover:text-[#080908] font-bold transition-all duration-300 shadow-md cursor-pointer group"
@@ -207,33 +207,33 @@ export default function ItineraryView({ tour, onBack, onPlanTrip, openLegal }) {
 
       {/* Quick Specs Ribbon (Duration, Group Size, Best Season, From Price) */}
       <section className="bg-[#121412] border-y border-[#242923]">
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-12 py-5">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 py-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
             <div>
-              <p className="font-sans text-[10px] text-[#A7A59B] uppercase tracking-widest mb-1 font-semibold">
+              <p className="font-sans text-[9px] sm:text-[10px] text-[#A7A59B] uppercase tracking-wider mb-1 font-semibold">
                 Duration
               </p>
-              <p className="font-serif text-base sm:text-lg text-[#F2F0E8]">{currentTour.duration}</p>
+              <p className="font-serif text-sm sm:text-lg text-[#F2F0E8]">{currentTour.duration}</p>
             </div>
             <div>
-              <p className="font-sans text-[10px] text-[#A7A59B] uppercase tracking-widest mb-1 font-semibold">
+              <p className="font-sans text-[9px] sm:text-[10px] text-[#A7A59B] uppercase tracking-wider mb-1 font-semibold">
                 Group Size
               </p>
-              <p className="font-serif text-base sm:text-lg text-[#F2F0E8]">Max 4 per Gypsy</p>
+              <p className="font-serif text-sm sm:text-lg text-[#F2F0E8]">Max 4 per Gypsy</p>
             </div>
             <div>
-              <p className="font-sans text-[10px] text-[#A7A59B] uppercase tracking-widest mb-1 font-semibold">
-                Best Photographic Season
+              <p className="font-sans text-[9px] sm:text-[10px] text-[#A7A59B] uppercase tracking-wider mb-1 font-semibold">
+                Best Season
               </p>
-              <p className="font-serif text-base sm:text-lg text-[#D6A85C]">{currentTour.bestSeason}</p>
+              <p className="font-serif text-sm sm:text-lg text-[#D6A85C]">{currentTour.bestSeason}</p>
             </div>
             <div>
-              <p className="font-sans text-[10px] text-[#A7A59B] uppercase tracking-widest mb-1 font-semibold">
+              <p className="font-sans text-[9px] sm:text-[10px] text-[#A7A59B] uppercase tracking-wider mb-1 font-semibold truncate">
                 Investment (All-Inclusive)
               </p>
-              <p className="font-serif text-base sm:text-lg text-[#D6A85C]">
+              <p className="font-serif text-sm sm:text-lg text-[#D6A85C]">
                 From ₹XX,XXX{' '}
-                <span className="text-[10px] text-[#A7A59B] font-sans block sm:inline">(All Taxes & Permits Included)</span>
+                <span className="text-[9px] sm:text-[10px] text-[#A7A59B] font-sans block sm:inline">(Taxes & Permits Included)</span>
               </p>
             </div>
           </div>

@@ -69,10 +69,10 @@ export default function LegalModal({ isOpen, onClose, initialTab = 'terms' }) {
         </div>
 
         {/* Tab Navigation */}
-        <div className="shrink-0 relative z-20 flex border-b border-[#242923] bg-[#111511] px-6 md:px-8 gap-3 sm:gap-6 overflow-x-auto shadow-md">
+        <div className="shrink-0 relative z-20 flex border-b border-[#242923] bg-[#111511] px-3 sm:px-6 md:px-8 gap-2 sm:gap-6 overflow-x-auto shadow-md">
           <button
             onClick={() => setActiveTab('terms')}
-            className={`py-3.5 font-sans text-xs tracking-[0.15em] uppercase transition-all relative cursor-pointer whitespace-nowrap ${
+            className={`py-3 font-sans text-[11px] sm:text-xs tracking-[0.06em] sm:tracking-[0.15em] uppercase transition-all relative cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === 'terms'
                 ? 'text-[#D6A85C] font-semibold'
                 : 'text-[#A7A59B] hover:text-[#F2F0E8]'
@@ -86,7 +86,7 @@ export default function LegalModal({ isOpen, onClose, initialTab = 'terms' }) {
 
           <button
             onClick={() => setActiveTab('payment')}
-            className={`py-3.5 font-sans text-xs tracking-[0.15em] uppercase transition-all relative cursor-pointer whitespace-nowrap ${
+            className={`py-3 font-sans text-[11px] sm:text-xs tracking-[0.06em] sm:tracking-[0.15em] uppercase transition-all relative cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === 'payment'
                 ? 'text-[#D6A85C] font-semibold'
                 : 'text-[#A7A59B] hover:text-[#F2F0E8]'

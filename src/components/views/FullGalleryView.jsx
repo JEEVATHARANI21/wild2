@@ -146,11 +146,30 @@ export default function FullGalleryView({ onBackToHome, onPlanTrip }) {
       {/* Lightbox Modal */}
       {activePhoto && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 md:p-8 bg-[#080908]/95 backdrop-blur-2xl animate-fadeIn"
+          className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-3 pt-20 sm:p-6 sm:pt-24 md:p-8 md:pt-24 bg-[#080908]/96 backdrop-blur-2xl animate-fadeIn select-none"
           onClick={() => setActivePhoto(null)}
         >
+          {/* Top Bar with Back Button */}
+          <div className="max-w-5xl w-full mb-3 flex items-center justify-between z-20" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setActivePhoto(null)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#151815] border border-[#D6A85C]/60 text-[#D6A85C] hover:bg-[#D6A85C] hover:text-[#080908] text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 shadow-lg cursor-pointer"
+            >
+              <span>←</span>
+              <span>Back to Gallery</span>
+            </button>
+
+            <button
+              onClick={() => setActivePhoto(null)}
+              className="px-4 py-2 rounded-full bg-[#151815] border border-[#242923] hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#D6A85C] text-xs font-sans font-medium transition-all cursor-pointer"
+              title="Close (Go Back)"
+            >
+              ✕ Close
+            </button>
+          </div>
+
           <div
-            className="relative max-w-5xl w-full max-h-[92vh] flex flex-col lg:flex-row rounded-3xl bg-[#151815] border border-[#242923] shadow-2xl overflow-hidden"
+            className="relative max-w-5xl w-full max-h-[92vh] flex flex-col lg:flex-row rounded-3xl bg-[#151815] border border-[#242923] shadow-2xl overflow-hidden my-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}

@@ -218,9 +218,28 @@ export default function HomeGalleryPreview({ onViewFullGallery, onNavigateToGall
       {/* Lightbox / Specimen Inspection Modal */}
       {selectedImage && (
         <div
-          className="fixed inset-0 z-50 bg-[#040504]/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 md:p-10 overflow-y-auto animate-fadeIn"
+          className="fixed inset-0 z-[99999] bg-[#040504]/96 backdrop-blur-2xl flex flex-col items-center justify-center p-4 pt-20 md:p-8 md:pt-24 overflow-y-auto animate-fadeIn select-none"
           onClick={() => setSelectedImage(null)}
         >
+          {/* Top Bar with Back Button */}
+          <div className="max-w-5xl w-full mb-3 flex items-center justify-between z-20" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#151815] border border-[#D6A85C]/60 text-[#D6A85C] hover:bg-[#D6A85C] hover:text-[#080908] text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 shadow-lg cursor-pointer"
+            >
+              <span>←</span>
+              <span>Back to Gallery</span>
+            </button>
+
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="px-4 py-2 rounded-full bg-[#151815] border border-[#242923] hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#D6A85C] text-xs font-sans font-medium transition-all cursor-pointer"
+              title="Close (Go Back)"
+            >
+              ✕ Close
+            </button>
+          </div>
+
           <div
             className="relative max-w-5xl w-full bg-[#0d100d] border border-[#242923] rounded-3xl overflow-hidden shadow-2xl my-auto"
             onClick={(e) => e.stopPropagation()}

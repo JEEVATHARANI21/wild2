@@ -300,20 +300,31 @@ export default function DnaCarousel({
       {lightboxIndex !== null && items[lightboxIndex] && (
         <div
           onClick={() => setLightboxIndex(null)}
-          className="fixed inset-0 z-[99999] bg-black/95 backdrop-blur-2xl flex flex-col justify-between p-4 md:p-8 animate-fadeIn select-none"
+          className="fixed inset-0 z-[99999] bg-[#040504]/96 backdrop-blur-2xl flex flex-col justify-between p-4 pt-20 md:p-8 md:pt-24 animate-fadeIn select-none"
         >
           {/* Header */}
-          <div className="flex items-center justify-between text-white z-20" onClick={(e) => e.stopPropagation()}>
-            <div>
-              <span className="text-[10px] uppercase tracking-[0.3em] text-[#D6A85C]">
-                DNA HELIX GALLERY • {lightboxIndex + 1} OF {items.length}
-              </span>
-              <h3 className="font-serif text-xl md:text-3xl text-[#F2F0E8]">{items[lightboxIndex].title}</h3>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between text-white z-20 max-w-7xl mx-auto w-full gap-3" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-3.5">
+              <button
+                onClick={() => setLightboxIndex(null)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#151815] border border-[#D6A85C]/60 text-[#D6A85C] hover:bg-[#D6A85C] hover:text-[#080908] text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 shadow-lg cursor-pointer flex-shrink-0"
+              >
+                <span>←</span>
+                <span>Back to Gallery</span>
+              </button>
+
+              <div>
+                <span className="text-[10px] uppercase tracking-[0.3em] text-[#D6A85C] block">
+                  DNA HELIX GALLERY • {lightboxIndex + 1} OF {items.length}
+                </span>
+                <h3 className="font-serif text-xl md:text-3xl text-[#F2F0E8] leading-tight">{items[lightboxIndex].title}</h3>
+              </div>
             </div>
 
             <button
               onClick={() => setLightboxIndex(null)}
-              className="p-3 rounded-full bg-white/10 hover:bg-[#D6A85C] hover:text-[#080908] transition-colors cursor-pointer"
+              className="p-3 rounded-full bg-white/10 hover:bg-[#D6A85C] hover:text-[#080908] transition-colors cursor-pointer self-end sm:self-auto"
+              title="Back to Gallery (Close)"
             >
               <X className="w-6 h-6" />
             </button>

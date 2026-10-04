@@ -163,7 +163,7 @@ function MainApp() {
         <main>
           {/* 1. HEROIC SCROLL-LOCKED HERO VIDEO */}
           <HeroVideo
-            src="/videos/VID-20260903-WA0005.mp4"
+            src="/videos/hornbill-flight.mp4"
             poster="https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1920&q=85"
             eyebrow="THE PINNACLE OF WILDLIFE PHOTOGRAPHY"
             title={"Bespoke Photographic\nExpeditions"}

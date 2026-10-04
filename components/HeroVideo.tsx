@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { ChevronDown, ArrowRight, Lock, Unlock } from "lucide-react";
 
 interface HeroVideoProps {
-  src: string;
+  src?: string;
   poster?: string;
   title?: string;
   eyebrow?: string;
@@ -15,13 +15,13 @@ interface HeroVideoProps {
 }
 
 export default function HeroVideo({
-  src = "/videos/VID-20260903-WA0005.mp4",
+  src = "/videos/hornbill-flight.mp4",
   poster = "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1920&q=85",
   title = "WILD PLACES.\nREAL MOMENTS.",
   eyebrow = "WILDLIFE PHOTOGRAPHY SAFARIS",
   description = "Immersive wildlife photography journeys designed around extraordinary encounters.",
   primaryCtaText = "BOOK A SAFARI",
-  secondaryCtaText = "EXPLORE JOURNEYS",
+  secondaryCtaText = "EXPLORE TOURS",
   onPrimaryCtaClick,
 }: HeroVideoProps) {
   const scrollTrackRef = useRef<HTMLDivElement | null>(null);
@@ -30,9 +30,15 @@ export default function HeroVideo({
   const [hasError, setHasError] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0); // 0.0 to 1.0
   const [videoCompleted, setVideoCompleted] = useState(false);
+  const videoCompletedRef = useRef(false);
   const [isReducedMotion, setIsReducedMotion] = useState(false);
 
-  // Prime video frame 0.01s on load so video is visible immediately
+  // Sync ref with state for event listeners
+  useEffect(() => {
+    videoCompletedRef.current = videoCompleted;
+  }, [videoCompleted]);
+
+  // Prime video frame 0.01s on load so video first frame is visible immediately
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -54,12 +60,13 @@ export default function HeroVideo({
     };
   }, [src]);
 
-  // Scroll Interaction Handler: Video plays ONLY while user scrolls, pauses when user stops scrolling.
-  // Section stays locked/sticky until video finishes playing.
+  // Scroll Interaction & Clamping Handler
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mediaQuery.matches) {
       setIsReducedMotion(true);
+      setVideoCompleted(true);
+      videoCompletedRef.current = true;
       return;
     }
 
@@ -100,24 +107,39 @@ export default function HeroVideo({
 
       setVideoProgress(rawProgress);
 
-      // Lock indicator: hero completes when scroll reaches end or video completes
-      if (rawProgress >= 0.94 || video.ended || (video.duration && video.currentTime >= video.duration - 0.25)) {
+      const isVideoEnded =
+        video.ended ||
+        (video.duration > 0 && video.currentTime >= video.duration - 0.15);
+
+      if (isVideoEnded && !videoCompletedRef.current) {
         setVideoCompleted(true);
-      } else {
-        setVideoCompleted(false);
+        videoCompletedRef.current = true;
       }
 
-      // Play video while user is actively scrolling
-      if (video.paused && rawProgress < 0.96 && !video.ended) {
+      // CRITICAL REQUIREMENT: Clamp scroll until video has completed.
+      // If user reaches/exceeds the end of the sticky hero track while video is incomplete,
+      // hold scroll position at maxScrollableDistance so Section 2 cannot be seen.
+      if (!videoCompletedRef.current && scrolledDistance >= maxScrollableDistance - 5) {
+        const targetTop = track.offsetTop + maxScrollableDistance;
+        if (window.scrollY > targetTop) {
+          window.scrollTo({
+            top: targetTop,
+            behavior: "instant",
+          });
+        }
+      }
+
+      // Play video while user is scrolling (if video is incomplete)
+      if (video.paused && !videoCompletedRef.current) {
         video.muted = true;
         video.playsInline = true;
         video.play().catch(() => {});
       }
 
-      // Pause video 150ms after user stops scrolling
+      // Pause video 150-200ms after scroll stops
       if (scrollTimer) clearTimeout(scrollTimer);
       scrollTimer = setTimeout(() => {
-        if (video && !video.paused) {
+        if (video && !video.paused && !videoCompletedRef.current) {
           video.pause();
         }
       }, 150);
@@ -135,47 +157,55 @@ export default function HeroVideo({
   const handleVideoEnded = () => {
     if (videoRef.current) videoRef.current.pause();
     setVideoCompleted(true);
+    videoCompletedRef.current = true;
   };
 
   const handleTimeUpdate = () => {
     const video = videoRef.current;
     if (!video || !video.duration) return;
-    if (video.currentTime >= video.duration - 0.2) {
+    if (video.currentTime >= video.duration - 0.15) {
       video.pause();
       setVideoCompleted(true);
+      videoCompletedRef.current = true;
     }
   };
 
+  const handleVideoError = () => {
+    setHasError(true);
+    setVideoCompleted(true);
+    videoCompletedRef.current = true;
+  };
+
   return (
-    /* HERO SCROLL TRACK (Sticky locked section while video plays on scroll) */
+    /* HERO SCROLL CONTAINER (Dedicated Sticky Scroll Container) */
     <section
       ref={scrollTrackRef}
-      className={`relative w-full bg-[#080909] ${
-        isReducedMotion ? "min-h-screen pt-24 pb-12" : "h-[240vh]"
+      className={`hero-scroll-container relative w-full bg-[#080909] ${
+        isReducedMotion ? "min-h-screen pt-24 pb-12" : "h-[350vh]"
       }`}
     >
       {/* HERO STICKY INNER CONTAINER */}
       <div
-        className={`${
+        className={`hero-sticky ${
           isReducedMotion
             ? "relative w-full h-[84vh]"
             : "sticky top-0 w-full h-screen"
-        } flex flex-col items-center justify-center p-4 pt-20 md:p-8 md:pt-24 lg:p-12 lg:pt-24 z-20 transform-gpu will-change-transform`}
+        } flex flex-col items-center justify-center p-4 pt-20 md:p-8 md:pt-24 lg:p-12 lg:pt-24 z-10 transform-gpu will-change-transform`}
         style={{ transform: "translateZ(0)" }}
       >
         {/* HERO CONTAINER CARD */}
         <div className="relative w-full max-w-[1500px] h-[78vh] md:h-[82vh] rounded-2xl md:rounded-[28px] overflow-hidden border border-white/15 bg-[#0e110e] shadow-[0_20px_50px_rgba(0,0,0,0.8)] group">
-          {/* Main Hornbill Video Element */}
+          {/* Main Wildlife Video Element */}
           <video
             ref={videoRef}
             src={src}
             poster={poster}
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             onEnded={handleVideoEnded}
             onTimeUpdate={handleTimeUpdate}
-            onError={() => setHasError(true)}
+            onError={handleVideoError}
             className={`w-full h-full object-cover transition-opacity duration-500 ${
               hasError ? "opacity-0" : "opacity-100"
             }`}
@@ -253,7 +283,7 @@ export default function HeroVideo({
             {/* Scroll Indicator */}
             <div
               className={`flex items-center justify-between text-xs tracking-[0.25em] text-[#F2F0E8]/70 uppercase pt-2 pointer-events-auto transition-opacity duration-500 ${
-                videoProgress >= 0.96 ? "opacity-0" : "opacity-100"
+                videoProgress >= 0.98 && videoCompleted ? "opacity-0" : "opacity-100"
               }`}
             >
               <div className="hidden md:flex items-center gap-2">

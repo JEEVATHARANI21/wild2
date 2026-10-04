@@ -34,12 +34,12 @@ export default function HeroVideo({
   const [isReducedMotion, setIsReducedMotion] = useState(false);
   const rafIdRef = useRef<number | null>(null);
 
-  // Keep ref synced with state for event listeners
+  // Keep ref synced with state
   useEffect(() => {
     videoCompletedRef.current = videoCompleted;
   }, [videoCompleted]);
 
-  // Prime video frame 0.01s on load so video first frame is visible immediately
+  // Prime video on load so initial frame is visible
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -63,7 +63,7 @@ export default function HeroVideo({
     };
   }, [src]);
 
-  // Sync Video Playback with Scroll Position & Clamp Scroll Until Complete
+  // Scroll Sync & Fixed Pinning Handler
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mediaQuery.matches) {
@@ -77,22 +77,8 @@ export default function HeroVideo({
     const track = scrollTrackRef.current;
     if (!video || !track) return;
 
-    let isHeroVisible = true;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isHeroVisible = entry.isIntersecting;
-        if (!isHeroVisible && video && !video.paused) {
-          video.pause();
-        }
-      },
-      { threshold: 0.05 }
-    );
-
-    observer.observe(track);
-
     const handleScroll = () => {
-      if (!track || !video || !isHeroVisible) return;
+      if (!track || !video) return;
 
       const rect = track.getBoundingClientRect();
       const trackHeight = rect.height;
@@ -109,7 +95,7 @@ export default function HeroVideo({
 
       setVideoProgress(rawProgress);
 
-      // Synchronize video currentTime directly with scroll progress if duration is available
+      // 1. Sync video currentTime directly with scroll progress
       if (video.duration && !isNaN(video.duration) && video.duration > 0) {
         const targetTime = Math.min(
           Math.max(rawProgress * video.duration, 0.01),
@@ -123,7 +109,6 @@ export default function HeroVideo({
           }
         });
       } else {
-        // Fallback if video duration metadata is not loaded yet
         if (video.paused && !videoCompletedRef.current) {
           video.muted = true;
           video.playsInline = true;
@@ -131,7 +116,7 @@ export default function HeroVideo({
         }
       }
 
-      // Mark hero completed ONLY when scroll reaches the end of hero track AND video is at final frame
+      // Mark hero completed ONLY when scroll reaches 98%+ OR video ends
       const isFinished =
         rawProgress >= 0.98 ||
         video.ended ||
@@ -141,23 +126,12 @@ export default function HeroVideo({
         setVideoCompleted(true);
         videoCompletedRef.current = true;
       }
-
-      // HARD SCROLL CLAMP: Hold scroll position at end of hero track if video is NOT finished
-      if (!videoCompletedRef.current && scrolledDistance >= maxScrollableDistance) {
-        const clampTop = track.offsetTop + maxScrollableDistance;
-        if (window.scrollY > clampTop) {
-          window.scrollTo({
-            top: clampTop,
-            behavior: "instant",
-          });
-        }
-      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
 
     return () => {
-      observer.disconnect();
       window.removeEventListener("scroll", handleScroll);
       if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
     };
@@ -185,20 +159,21 @@ export default function HeroVideo({
     videoCompletedRef.current = true;
   };
 
+  const isFixed = !videoCompleted && !isReducedMotion;
+
   return (
     <section
       ref={scrollTrackRef}
-      className={`hero-scroll-container relative w-full bg-[#080909] ${
-        isReducedMotion ? "min-h-screen pt-24 pb-12" : "h-[320vh]"
-      }`}
+      className="hero-scroll-container relative w-full bg-[#080909]"
+      style={{ height: isReducedMotion ? "auto" : "320vh" }}
     >
+      {/* HERO CONTAINER CARD (Fixed overlay while video plays, switches to sticky once complete) */}
       <div
-        className={`hero-sticky ${
-          isReducedMotion
-            ? "relative w-full h-[84vh]"
-            : "sticky top-0 w-full h-screen"
-        } flex flex-col items-center justify-center p-4 pt-20 md:p-8 md:pt-24 lg:p-12 lg:pt-24 z-10 transform-gpu will-change-transform`}
-        style={{ transform: "translateZ(0)" }}
+        className={`${
+          isFixed
+            ? "fixed top-0 left-0 w-full h-screen z-30"
+            : "sticky top-0 w-full h-screen z-10"
+        } flex flex-col items-center justify-center p-4 pt-20 md:p-8 md:pt-24 lg:p-12 lg:pt-24 transition-all duration-300`}
       >
         <div className="relative w-full max-w-[1500px] h-[78vh] md:h-[82vh] rounded-2xl md:rounded-[28px] overflow-hidden border border-white/15 bg-[#0e110e] shadow-[0_20px_50px_rgba(0,0,0,0.8)] group">
           <video

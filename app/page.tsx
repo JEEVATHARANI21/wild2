@@ -1,69 +1,249 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Lenis from "lenis";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+import ToeholdNavbar from "@/src/components/toehold/ToeholdNavbar";
+import HeroVideo from "@/components/HeroVideo";
+import TourCatalog from "@/src/components/toehold/TourCatalog";
+import FoundersSection from "@/src/components/toehold/FoundersSection";
+import Testimonials from "@/src/components/toehold/Testimonials";
+import ContactFooter from "@/src/components/toehold/ContactFooter";
+import SeasonCalendarModal from "@/src/components/toehold/SeasonCalendarModal";
+import PlanExpeditionModal from "@/src/components/toehold/PlanExpeditionModal";
+import HomeGalleryPreview from "@/src/components/toehold/HomeGalleryPreview";
+
+import FullGalleryView from "@/src/components/views/FullGalleryView";
+import ItineraryView from "@/src/components/views/ItineraryView";
+import AboutView from "@/src/components/views/AboutView";
+import FAQView from "@/src/components/views/FAQView";
+
+import CustomCursor from "@/src/components/CustomCursor";
+import LegalModal from "@/src/components/LegalModal";
+import WhatsAppButton from "@/src/components/WhatsAppButton";
+
+import { TOURS_DATA } from "@/src/data/photoToursData";
+import { useSiteContent, SiteContentProvider } from "@/src/context/SiteContentContext";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+function MainApp() {
+  const siteCtx: any = useSiteContent();
+  const content: any = siteCtx?.content || {};
+  const lenisRef = useRef<Lenis | null>(null);
+
+  const [currentView, setCurrentView] = useState("home"); // 'home' | 'gallery' | 'about' | 'itinerary' | 'faq'
+  const [activeCategory, setActiveCategory] = useState("animals"); // 'animals' | 'birds'
+  const [selectedTour, setSelectedTour] = useState<any>(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [planTripModalOpen, setPlanTripModalOpen] = useState(false);
+  const [legalModalOpen, setLegalModalOpen] = useState(false);
+  const [legalTab, setLegalTab] = useState("terms");
+
+  const openLegal = (tab = "terms") => {
+    setLegalTab(tab);
+    setLegalModalOpen(true);
+  };
+
+  // Smooth scroll and view switching
+  const navigateTo = (view: string, targetAnchor: string | null = null) => {
+    setCurrentView(view);
+    window.scrollTo({ top: 0, behavior: "instant" });
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+    }
+    if (targetAnchor) {
+      setTimeout(() => {
+        const id = targetAnchor === "destinations" ? "tours" : targetAnchor;
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 150);
+    }
+  };
+
+  const handleOpenItinerary = (tour: any) => {
+    setSelectedTour(tour);
+    setCurrentView("itinerary");
+    window.scrollTo({ top: 0, behavior: "instant" });
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+    }
+  };
+
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smooth: true,
+    } as any);
+    lenisRef.current = lenis;
+
+    lenis.on("scroll", ScrollTrigger.update);
+    const tickerCb = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+    gsap.ticker.add(tickerCb);
+    gsap.ticker.lagSmoothing(0);
+
+    return () => {
+      lenis.destroy();
+      gsap.ticker.remove(tickerCb);
+    };
+  }, []);
+
+  const isAnyModalOpen = Boolean(
+    calendarOpen || planTripModalOpen || legalModalOpen
+  );
+
+  useEffect(() => {
+    if (!lenisRef.current) return;
+
+    if (isAnyModalOpen) {
+      lenisRef.current.stop();
+      document.body.style.overflow = "hidden";
+    } else {
+      lenisRef.current.start();
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+      document.body.style.height = "";
+      document.documentElement.style.height = "";
+    }
+  }, [isAnyModalOpen]);
+
+  return (
+    <div className="grain min-h-screen bg-[#080908] text-[#F2F0E8] font-sans antialiased">
+      <CustomCursor />
+
+      {/* 1. Navbar from D:\wildlife */}
+      <ToeholdNavbar
+        currentView={currentView}
+        onNavigate={navigateTo}
+        onOpenEnquire={() => setPlanTripModalOpen(true)}
+      />
+
+      {/* VIEW ROUTING FROM D:\wildlife */}
+      {currentView === "gallery" && (
+        <FullGalleryView
+          onBackToHome={() => navigateTo("home")}
+          onPlanTrip={() => setPlanTripModalOpen(true)}
+        />
+      )}
+
+      {currentView === "about" && (
+        <AboutView
+          onBackToHome={() => navigateTo("home")}
+          onPlanTrip={() => setPlanTripModalOpen(true)}
+        />
+      )}
+
+      {currentView === "faq" && (
+        <FAQView
+          onBackToHome={() => navigateTo("home")}
+          onPlanTrip={() => setPlanTripModalOpen(true)}
+        />
+      )}
+
+      {currentView === "itinerary" && selectedTour && (
+        <ItineraryView
+          tour={selectedTour}
+          onBack={() => navigateTo("home")}
+          onPlanTrip={() => setPlanTripModalOpen(true)}
+          openLegal={openLegal}
+        />
+      )}
+
+      {currentView === "home" && (
+        <main>
+          {/* 1. HEROIC SCROLL-LOCKED HERO VIDEO WITH HORNBILL FLIGHT */}
+          <HeroVideo
+            src="/videos/hornbill.mp4"
+            poster="https://images.unsplash.com/photo-1522926193341-e9ffd686c60f?auto=format&fit=crop&w=1920&q=85"
+            eyebrow="THE PINNACLE OF WILDLIFE PHOTOGRAPHY"
+            title={"Bespoke Photographic\nExpeditions"}
+            description="Masterclass field tracking, intimate vehicular limits (max 4 per Gypsy), and deep animal behavior anticipation with expedition mentors across India & Africa’s wildest national parks."
+            primaryCtaText="TALK TO EXPERT"
+            secondaryCtaText="EXPLORE TOURS"
+            onPrimaryCtaClick={() => setPlanTripModalOpen(true)}
+          />
+
+          {/* 2. Founder Section from D:\wildlife */}
+          <FoundersSection
+            founders={content?.founders || TOURS_DATA.founders}
+            onViewFullAbout={() => navigateTo("about")}
+            onPlanTrip={() => setPlanTripModalOpen(true)}
+            onExploreTrips={() => {
+              const el = document.getElementById("packages");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }}
+          />
+
+          {/* 3. Gallery Preview from D:\wildlife */}
+          <HomeGalleryPreview
+            onViewFullGallery={() => navigateTo("gallery")}
+            onNavigateToGallery={() => navigateTo("gallery")}
+            onPlanTrip={() => setPlanTripModalOpen(true)}
+          />
+
+          {/* 4. Tracking Package Tour Itineraries Catalog from D:\wildlife */}
+          <TourCatalog
+            animalTours={content?.animalTours || TOURS_DATA.animalTours}
+            birdTours={content?.birdTours || TOURS_DATA.birdTours}
+            activeCategory={activeCategory}
+            setActiveCategory={setActiveCategory}
+            onSelectTour={handleOpenItinerary}
+            onOpenCalendar={() => setCalendarOpen(true)}
+          />
+
+          {/* 5. Customer Reviews / Testimonials from D:\wildlife */}
+          <Testimonials testimonials={TOURS_DATA.testimonials as any} />
+
+          {/* 6. Contact Footer & Legal Links from D:\wildlife */}
+          <ContactFooter
+            openLegal={openLegal}
+            onPlanTrip={() => setPlanTripModalOpen(true)}
+          />
+        </main>
+      )}
+
+      {/* 2026-2027 Season Departure Calendar Modal */}
+      <SeasonCalendarModal
+        isOpen={calendarOpen}
+        onClose={() => setCalendarOpen(false)}
+        onSelectTour={handleOpenItinerary}
+        animalTours={content?.animalTours || TOURS_DATA.animalTours}
+        birdTours={content?.birdTours || TOURS_DATA.birdTours}
+      />
+
+      {/* Plan Your Expedition Qualification Lead Funnel Modal (Enquire) */}
+      <PlanExpeditionModal
+        isOpen={planTripModalOpen}
+        onClose={() => setPlanTripModalOpen(false)}
+        openLegal={openLegal}
+      />
+
+      {/* Terms & Privacy Policy Modal */}
+      <LegalModal
+        isOpen={legalModalOpen}
+        onClose={() => setLegalModalOpen(false)}
+        initialTab={legalTab}
+      />
+
+      {/* Floating WhatsApp Quick Connect */}
+      <WhatsAppButton />
+    </div>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <SiteContentProvider>
+      <MainApp />
+    </SiteContentProvider>
   );
 }

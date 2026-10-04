@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- 1. Home: Wildlife Photography in Tamil Nadu -->
+  <url>
+    <loc>https://vmwildexpeditions.com/</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://vmwildexpeditions.com/images/user/IMG_4761.JPG</image:loc>
+      <image:title>Wildlife Photography in Tamil Nadu - Indian Leopard by Vijay Mathiew</image:title>
+      <image:caption>VM Wild Expeditions fine art wildlife photography</image:caption>
+    </image:image>
+  </url>
+
+  <!-- 2. Gallery: Wildlife Photography Gallery -->
+  <url>
+    <loc>https://vmwildexpeditions.com/#gallery</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- 3. Wildlife: Wildlife Photography India -->
+  <url>
+    <loc>https://vmwildexpeditions.com/#wildlife</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- 4. Birds: Bird Photography -->
+  <url>
+    <loc>https://vmwildexpeditions.com/#birds</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- 5. About: Professional Wildlife Photographer -->
+  <url>
+    <loc>https://vmwildexpeditions.com/#about</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- 8. Contact: Wildlife Photographer Tamil Nadu -->
+  <url>
+    <loc>https://vmwildexpeditions.com/#contact</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+</urlset>

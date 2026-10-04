@@ -1,0 +1,6 @@
+# User-agent directive for all search engines (Googlebot, Bingbot, etc.)
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://vmwildexpeditions.com/sitemap.xml

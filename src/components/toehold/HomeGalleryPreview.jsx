@@ -184,8 +184,7 @@ export default function HomeGalleryPreview({ onViewFullGallery, onNavigateToGall
                     {item.species}
                   </p>
 
-                  <div className="mt-2 pt-2 border-t border-[#181c17] flex items-center justify-between text-[10px] text-[#A7A59B] font-mono">
-                    <span>{item.gear ? item.gear.split('·')[0] : '400mm f/2.8'}</span>
+                  <div className="mt-2 pt-2 border-t border-[#181c17] flex items-center justify-end text-[10px] text-[#A7A59B] font-mono">
                     <span className="text-[#D6A85C] group-hover:underline">Inspect Photo →</span>
                   </div>
                 </div>
@@ -284,15 +283,7 @@ export default function HomeGalleryPreview({ onViewFullGallery, onNavigateToGall
                     {selectedImage.caption || 'Captured during prime habitat activity in high-dynamic lighting conditions.'}
                   </p>
 
-                  <div className="p-4 rounded-xl bg-[#131713] border border-[#20251f] mb-6">
-                    <span className="block text-[9px] uppercase tracking-widest text-[#D6A85C] mb-1">
-                      EXIF Field Metadata
-                    </span>
-                    <span className="text-[#F2F0E8] font-mono text-xs block">
-                      {selectedImage.gear || '400mm f/2.8 · 1/1000s · ISO 400'}
-                    </span>
                   </div>
-                </div>
 
                 <div className="flex items-center gap-3 pt-4 border-t border-[#20251f]">
                   <button

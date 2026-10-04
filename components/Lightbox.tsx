@@ -101,34 +101,14 @@ export default function Lightbox({
         </button>
       </div>
 
-      {/* Bottom Bar: EXIF Metadata */}
+      {/* Bottom Bar */}
       <div
-        className="max-w-4xl mx-auto w-full p-4 md:p-6 rounded-2xl bg-[#111312] border border-white/10 text-xs text-[#F2F0E8] z-20 flex flex-wrap items-center justify-between gap-4"
+        className="max-w-4xl mx-auto w-full p-4 md:p-6 rounded-2xl bg-[#111312] border border-white/10 text-xs text-[#F2F0E8] z-20 flex items-center justify-between gap-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2 text-[#C2A676]">
           <MapPin className="w-4 h-4" />
           <span className="uppercase tracking-wider font-medium">{current.location}</span>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-4 md:gap-8 text-[#9A988E]">
-          <div className="flex items-center gap-2">
-            <Camera className="w-3.5 h-3.5 text-[#C2A676]" />
-            <span>{current.exif.camera}</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Sliders className="w-3.5 h-3.5 text-[#C2A676]" />
-            <span>{current.exif.lens}</span>
-          </div>
-
-          <div className="flex items-center gap-3 text-white font-mono text-[11px] bg-black/40 px-3 py-1 rounded-full border border-white/5">
-            <span>{current.exif.aperture}</span>
-            <span>•</span>
-            <span>{current.exif.shutter}</span>
-            <span>•</span>
-            <span>ISO {current.exif.iso}</span>
-          </div>
         </div>
       </div>
 

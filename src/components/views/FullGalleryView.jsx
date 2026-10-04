@@ -112,12 +112,6 @@ export default function FullGalleryView({ onBackToHome, onPlanTrip }) {
                     </div>
                   </div>
 
-                  {/* HUD Exposure Readout */}
-                  <div className="absolute bottom-1 right-1 flex items-center gap-2 bg-[#080908]/85 px-2.5 py-0.5 rounded text-[8.5px] font-mono text-[#D6A85C] border border-[#242923]">
-                    <span>AF-C [ON]</span>
-                    <span>•</span>
-                    <span>RAW</span>
-                  </div>
                 </div>
               </div>
 

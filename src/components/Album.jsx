@@ -435,31 +435,6 @@ export default function Album() {
               </p>
             </div>
 
-            {/* Technical EXIF Metadata Tag */}
-            <div
-              ref={specRef}
-              className="flex items-center gap-3 sm:gap-4 bg-[#0B0C0A]/80 border border-[#2A2B28] rounded-xl px-3.5 sm:px-5 py-2 sm:py-3 backdrop-blur-md text-[10px] sm:text-[11px] font-sans text-[#A7A59B]"
-            >
-              <div>
-                <span className="block text-[8px] sm:text-[9px] uppercase tracking-widest text-[#666]">
-                  Optics
-                </span>
-                <span className="text-[#F1EFE8]">{currentPhoto.lens}</span>
-              </div>
-              <div className="w-[1px] h-5 sm:h-6 bg-[#2A2B28]" />
-              <div>
-                <span className="block text-[8px] sm:text-[9px] uppercase tracking-widest text-[#666]">
-                  Sensitivity
-                </span>
-                <span className="text-[#F1EFE8]">{currentPhoto.iso}</span>
-              </div>
-              <div className="w-[1px] h-5 sm:h-6 bg-[#2A2B28]" />
-              <div>
-                <span className="block text-[8px] sm:text-[9px] uppercase tracking-widest text-[#666]">
-                  Speed
-                </span>
-                <span className="text-[#F1EFE8]">{currentPhoto.shutter}</span>
-              </div>
             </div>
           </div>
         </div>

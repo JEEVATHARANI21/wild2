@@ -353,22 +353,11 @@ export default function DnaCarousel({
             </button>
           </div>
 
-          {/* EXIF Footer Details */}
-          <div className="max-w-4xl mx-auto w-full p-4 rounded-2xl bg-[#111411] border border-white/10 text-xs text-[#F2F0E8] flex flex-wrap items-center justify-between gap-4 z-20" onClick={(e) => e.stopPropagation()}>
+          {/* Footer Details */}
+          <div className="max-w-4xl mx-auto w-full p-4 rounded-2xl bg-[#111411] border border-white/10 text-xs text-[#F2F0E8] flex items-center justify-between gap-4 z-20" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-2 text-[#D6A85C]">
               <MapPin className="w-4 h-4" />
               <span>{items[lightboxIndex].location || "India Wilderness Corridor"}</span>
-            </div>
-
-            <div className="flex items-center gap-6 text-[#A7A59B]">
-              <div className="flex items-center gap-2">
-                <Camera className="w-3.5 h-3.5 text-[#D6A85C]" />
-                <span>{items[lightboxIndex].exif?.camera || "Nikon Z9 / Sony A1"}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Sliders className="w-3.5 h-3.5 text-[#D6A85C]" />
-                <span>{items[lightboxIndex].exif?.lens || "400mm f/2.8 Prime"}</span>
-              </div>
             </div>
           </div>
         </div>

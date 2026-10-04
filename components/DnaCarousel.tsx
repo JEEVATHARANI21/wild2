@@ -76,15 +76,25 @@ export default function DnaCarousel({
     };
   }, []);
 
-  // Auto-rotation loop (runs only when visible & auto-spin enabled)
+  // Auto-rotation loop (runs only when visible & auto-spin enabled, throttled to 30fps)
   useEffect(() => {
     if (!isMounted || !isAutoSpin || !isVisible) return;
 
     let lastTime = performance.now();
+    let accumulated = 0;
+    const frameInterval = 1000 / 30; // 30 fps state updates for butter-smooth animation without CPU lag
+
     const animate = (now: number) => {
-      const delta = (now - lastTime) / 1000;
+      const delta = now - lastTime;
       lastTime = now;
-      setRotation((prev) => prev + delta * 0.25); // Smooth rotation speed
+      accumulated += delta;
+
+      if (accumulated >= frameInterval) {
+        const stepSec = accumulated / 1000;
+        accumulated = 0;
+        setRotation((prev) => prev + stepSec * 0.22);
+      }
+
       autoSpinReq.current = requestAnimationFrame(animate);
     };
 

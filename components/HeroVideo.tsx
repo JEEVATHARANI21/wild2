@@ -102,6 +102,14 @@ export default function HeroVideo({
     let rafId: number | null = null;
     let targetProgress = 0;
     let currentProgress = 0;
+    let isAnimating = false;
+
+    const startAnimationLoop = () => {
+      if (!isAnimating) {
+        isAnimating = true;
+        rafId = requestAnimationFrame(updateTimeline);
+      }
+    };
 
     const handleScroll = () => {
       if (!track) return;
@@ -114,13 +122,16 @@ export default function HeroVideo({
 
       const scrolledDistance = -rect.top;
       targetProgress = clamp(scrolledDistance / maxScrollableDistance, 0, 1);
+      startAnimationLoop();
     };
 
     const updateTimeline = () => {
       // Smooth lerp toward target scroll progress
-      currentProgress += (targetProgress - currentProgress) * 0.16;
-      if (Math.abs(targetProgress - currentProgress) < 0.0003) {
+      const diff = targetProgress - currentProgress;
+      if (Math.abs(diff) < 0.0003) {
         currentProgress = targetProgress;
+      } else {
+        currentProgress += diff * 0.18;
       }
 
       // 1. REVERSIBLE VIDEO SCROLL-SCRUBBING (Hardware Throttled for Ultra Performance)
@@ -194,12 +205,15 @@ export default function HeroVideo({
         }
       }
 
-      rafId = requestAnimationFrame(updateTimeline);
+      if (Math.abs(targetProgress - currentProgress) > 0.0003) {
+        rafId = requestAnimationFrame(updateTimeline);
+      } else {
+        isAnimating = false;
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    rafId = requestAnimationFrame(updateTimeline);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);

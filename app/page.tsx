@@ -7,7 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import ToeholdNavbar from "@/src/components/toehold/ToeholdNavbar";
 import HeroVideo from "@/components/HeroVideo";
-import IntroSection from "@/components/IntroSection";
 import TourCatalog from "@/src/components/toehold/TourCatalog";
 import FoundersSection from "@/src/components/toehold/FoundersSection";
 import Testimonials from "@/src/components/toehold/Testimonials";
@@ -173,10 +172,7 @@ function MainApp() {
             onPrimaryCtaClick={() => setPlanTripModalOpen(true)}
           />
 
-          {/* 2. Philosophy & Intro Section */}
-          <IntroSection />
-
-          {/* 3. Founder Section */}
+          {/* 2. Founder Section */}
           <FoundersSection
             founders={content?.founders || TOURS_DATA.founders}
             onViewFullAbout={() => navigateTo("about")}

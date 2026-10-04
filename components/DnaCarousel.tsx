@@ -46,20 +46,35 @@ export default function DnaCarousel({
   const hasDraggedFar = useRef(false);
   const autoSpinReq = useRef<number | null>(null);
 
-  // Hydration safety flag
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Hydration & Visibility IntersectionObserver safety
   useEffect(() => {
     setIsMounted(true);
+
+    const el = containerRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
-  // Auto-rotation loop (runs only after hydration mount)
+  // Auto-rotation loop (runs only when visible & auto-spin enabled)
   useEffect(() => {
-    if (!isMounted || !isAutoSpin) return;
+    if (!isMounted || !isAutoSpin || !isVisible) return;
 
     let lastTime = performance.now();
     const animate = (now: number) => {
       const delta = (now - lastTime) / 1000;
       lastTime = now;
-      setRotation((prev) => prev + delta * 0.3); // Smooth rotation speed
+      setRotation((prev) => prev + delta * 0.25); // Smooth rotation speed
       autoSpinReq.current = requestAnimationFrame(animate);
     };
 
@@ -68,7 +83,7 @@ export default function DnaCarousel({
     return () => {
       if (autoSpinReq.current) cancelAnimationFrame(autoSpinReq.current);
     };
-  }, [isMounted, isAutoSpin]);
+  }, [isMounted, isAutoSpin, isVisible]);
 
   // Pointer drag to spin helix horizontally without hijacking normal page scrolling
   const handlePointerDown = (e: React.PointerEvent) => {

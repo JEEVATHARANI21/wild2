@@ -123,14 +123,14 @@ export default function HeroVideo({
         currentProgress = targetProgress;
       }
 
-      // 1. REVERSIBLE VIDEO SCROLL-SCRUBBING
+      // 1. REVERSIBLE VIDEO SCROLL-SCRUBBING (Hardware Throttled for Ultra Performance)
       if (video.duration && !isNaN(video.duration) && video.duration > 0) {
         const targetTime = clamp(
           currentProgress * video.duration,
           0.01,
           video.duration - 0.02
         );
-        if (Math.abs(video.currentTime - targetTime) > 0.01) {
+        if (!video.seeking && Math.abs(video.currentTime - targetTime) > 0.035) {
           video.currentTime = targetTime;
         }
       }

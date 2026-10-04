@@ -296,24 +296,6 @@ export default function DnaCarousel({
         </div>
       </div>
 
-      {/* Bottom Editorial Header (Exact Match to Reference Image) */}
-      <div className="mt-4 pt-6 border-t border-white/10 z-20 relative max-w-3xl">
-        {/* Pill Badge */}
-        <div className="inline-block px-3 py-1 rounded-full border border-white/15 bg-white/5 text-[11px] font-sans text-[#A7A59B] tracking-wide mb-3">
-          {badgeLabel}
-        </div>
-
-        {/* Headline */}
-        <h3 className="font-serif text-3xl md:text-4xl text-white font-bold tracking-tight mb-2">
-          {title}
-        </h3>
-
-        {/* Description */}
-        <p className="font-sans text-xs md:text-sm text-[#A7A59B] leading-relaxed font-light">
-          {description}
-        </p>
-      </div>
-
       {/* Lightbox Modal for DNA Helix Card Clicks */}
       {lightboxIndex !== null && items[lightboxIndex] && (
         <div

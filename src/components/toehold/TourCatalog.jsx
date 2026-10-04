@@ -162,6 +162,7 @@ export default function TourCatalog({
                     alt={displayTitle}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.92] group-hover:brightness-100"
                     loading="lazy"
+                    decoding="async"
                   />
 
                   {/* Gradient for title contrast */}
@@ -258,8 +259,10 @@ export default function TourCatalog({
         {/* 6. Final Cinematic Call to Action Banner */}
         <div className="relative rounded-3xl overflow-hidden min-h-[360px] sm:min-h-[400px] flex flex-col items-center justify-center p-8 sm:p-14 text-center border border-[#242923] group">
           <img
-            src="https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=1920&q=85&auto=format&fit=crop"
+            src="/images/home-bg.png"
             alt="VM Wild Expeditions"
+            loading="lazy"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 brightness-[0.4]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#080908] via-[#080908]/75 to-transparent pointer-events-none" />

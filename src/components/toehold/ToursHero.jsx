@@ -17,6 +17,8 @@ export default function ToursHero({ onPlanTrip }) {
         <img
           src={hero.heroBgImage || '/images/home-bg.png'}
           alt="Wild Bengal Tiger — VM Wild Expeditions"
+          fetchPriority="high"
+          decoding="async"
           className="w-full h-full object-cover object-[80%_35%] sm:object-[75%_center] md:object-[80%_center] lg:object-[84%_center] brightness-[0.88] contrast-[1.05]"
         />
 

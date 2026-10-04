@@ -79,15 +79,17 @@ export default function App() {
     })
     lenisRef.current = lenis
 
-    lenis.on('scroll', ScrollTrigger.update)
-    gsap.ticker.add((time) => {
+    const updateLenis = (time) => {
       lenis.raf(time * 1000)
-    })
+    }
+
+    lenis.on('scroll', ScrollTrigger.update)
+    gsap.ticker.add(updateLenis)
     gsap.ticker.lagSmoothing(0)
 
     return () => {
       lenis.destroy()
-      gsap.ticker.remove(() => {})
+      gsap.ticker.remove(updateLenis)
     }
   }, [])
 

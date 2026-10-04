@@ -32,7 +32,7 @@ export default function HeroVideo({
   const [videoCompleted, setVideoCompleted] = useState(false);
   const [isReducedMotion, setIsReducedMotion] = useState(false);
 
-  // Prime first frame on load
+  // Prime video frame 0.01s on load so video is visible immediately
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -41,7 +41,7 @@ export default function HeroVideo({
     video.playsInline = true;
 
     const primeVideo = () => {
-      if (video.readyState >= 2) {
+      if (video.readyState >= 2 && video.currentTime === 0) {
         video.currentTime = 0.01;
       }
     };
@@ -54,7 +54,8 @@ export default function HeroVideo({
     };
   }, [src]);
 
-  // Locked 380vh scroll interaction: The page stays locked in place while scrolling until video ends
+  // Scroll Interaction Handler: Video plays ONLY while user scrolls, pauses when user stops scrolling.
+  // Section stays locked/sticky until video finishes playing.
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mediaQuery.matches) {
@@ -67,11 +68,14 @@ export default function HeroVideo({
     if (!video || !track) return;
 
     let isHeroVisible = true;
-    let ticking = false;
+    let scrollTimer: NodeJS.Timeout | null = null;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         isHeroVisible = entry.isIntersecting;
+        if (!isHeroVisible && video && !video.paused) {
+          video.pause();
+        }
       },
       { threshold: 0.05 }
     );
@@ -79,42 +83,44 @@ export default function HeroVideo({
     observer.observe(track);
 
     const handleScroll = () => {
-      if (!track || !video || !isHeroVisible || ticking) return;
+      if (!track || !video || !isHeroVisible) return;
 
-      ticking = true;
-      requestAnimationFrame(() => {
-        ticking = false;
+      const rect = track.getBoundingClientRect();
+      const trackHeight = rect.height;
+      const viewportHeight = window.innerHeight;
+      const maxScrollableDistance = trackHeight - viewportHeight;
 
-        const rect = track.getBoundingClientRect();
-        const trackHeight = rect.height;
-        const viewportHeight = window.innerHeight;
-        const maxScrollableDistance = trackHeight - viewportHeight;
+      if (maxScrollableDistance <= 0) return;
 
-        if (maxScrollableDistance <= 0) return;
+      const scrolledDistance = -rect.top;
+      const rawProgress = Math.min(
+        Math.max(scrolledDistance / maxScrollableDistance, 0),
+        1
+      );
 
-        const scrolledDistance = -rect.top;
-        const rawProgress = Math.min(
-          Math.max(scrolledDistance / maxScrollableDistance, 0),
-          1
-        );
+      setVideoProgress(rawProgress);
 
-        setVideoProgress(rawProgress);
+      // Lock indicator: hero completes when scroll reaches end or video completes
+      if (rawProgress >= 0.94 || video.ended || (video.duration && video.currentTime >= video.duration - 0.25)) {
+        setVideoCompleted(true);
+      } else {
+        setVideoCompleted(false);
+      }
 
-        // Synchronize video playback position accurately with scroll distance
-        if (video.duration && !isNaN(video.duration)) {
-          const targetTime = video.duration * rawProgress;
-          if (Math.abs(video.currentTime - targetTime) > 0.04) {
-            video.currentTime = targetTime;
-          }
+      // Play video while user is actively scrolling
+      if (video.paused && rawProgress < 0.96 && !video.ended) {
+        video.muted = true;
+        video.playsInline = true;
+        video.play().catch(() => {});
+      }
+
+      // Pause video 150ms after user stops scrolling
+      if (scrollTimer) clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        if (video && !video.paused) {
+          video.pause();
         }
-
-        // Section stays locked until video reaches end
-        if (rawProgress >= 0.96 || (video.duration && video.currentTime >= video.duration - 0.2)) {
-          setVideoCompleted(true);
-        } else {
-          setVideoCompleted(false);
-        }
-      });
+      }, 150);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -122,19 +128,21 @@ export default function HeroVideo({
     return () => {
       observer.disconnect();
       window.removeEventListener("scroll", handleScroll);
+      if (scrollTimer) clearTimeout(scrollTimer);
     };
   }, [src]);
 
   const handleVideoEnded = () => {
+    if (videoRef.current) videoRef.current.pause();
     setVideoCompleted(true);
   };
 
   return (
-    /* HERO SCROLL TRACK (380vh locked scroll distance - Video must complete before page advances) */
+    /* HERO SCROLL TRACK (Sticky locked section while video plays on scroll) */
     <section
       ref={scrollTrackRef}
       className={`relative w-full bg-[#080909] ${
-        isReducedMotion ? "min-h-screen pt-24 pb-12" : "h-[380vh]"
+        isReducedMotion ? "min-h-screen pt-24 pb-12" : "h-[240vh]"
       }`}
     >
       {/* HERO STICKY INNER CONTAINER */}
@@ -187,12 +195,12 @@ export default function HeroVideo({
                 {videoCompleted ? (
                   <>
                     <Unlock className="w-3 h-3 text-emerald-400" />
-                    <span className="text-emerald-400 font-medium">HERO UNLOCKED • SCROLL FOR NEXT SECTION</span>
+                    <span className="text-emerald-400 font-medium">HERO UNLOCKED • CONTINUE SCROLLING</span>
                   </>
                 ) : (
                   <>
                     <Lock className="w-3.5 h-3.5 text-[#D6A85C]" />
-                    <span>LOCKED SCROLL HERO • VIDEO PLAYING ({Math.round(videoProgress * 100)}%)</span>
+                    <span>SCROLL TO PLAY VIDEO ({Math.round(videoProgress * 100)}%)</span>
                   </>
                 )}
               </div>
@@ -235,22 +243,22 @@ export default function HeroVideo({
             {/* Scroll Indicator */}
             <div
               className={`flex items-center justify-between text-xs tracking-[0.25em] text-[#F2F0E8]/70 uppercase pt-2 pointer-events-auto transition-opacity duration-500 ${
-                videoProgress >= 0.98 ? "opacity-0" : "opacity-100"
+                videoProgress >= 0.96 ? "opacity-0" : "opacity-100"
               }`}
             >
               <div className="hidden md:flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#D6A85C] animate-pulse" />
                 <span className="font-semibold text-[11px] tracking-[0.25em] text-[#D6A85C]">
-                  {videoCompleted ? "VIDEO COMPLETE" : "SCROLL TO PLAY VIDEO TO END"}
+                  {videoCompleted ? "VIDEO COMPLETE" : "SCROLL TO PLAY VIDEO"}
                 </span>
               </div>
 
               <a
-                href="#intro"
+                href="#founders"
                 className="flex items-center gap-2 text-xs hover:text-[#D6A85C] transition-colors group/scroll"
               >
                 <span className="tracking-[0.2em]">
-                  {videoCompleted ? "SCROLL TO NEXT SECTION ↓" : "KEEP SCROLLING TO PLAY VIDEO"}
+                  {videoCompleted ? "SCROLL TO EXPEDITION LEADERS ↓" : "SCROLLING PLAYS VIDEO"}
                 </span>
                 <div className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center group-hover/scroll:border-[#D6A85C]">
                   <ChevronDown className="w-3.5 h-3.5 text-[#D6A85C] animate-bounce" />

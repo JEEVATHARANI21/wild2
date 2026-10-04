@@ -3,29 +3,55 @@ import { useState } from 'react'
 export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip, onExploreTrips }) {
   const [activeIdx, setActiveIdx] = useState(0)
 
-  if (!founders || founders.length === 0) return null
+  // Safe fallback list if prop is empty
+  const founderList = (founders && founders.length > 0) ? founders : [
+    {
+      id: 'founder-vijay',
+      name: 'Vijay Mathiew',
+      displayName: 'Vijay Mathiew',
+      role: 'Co-Founder & Principal Wildlife Photographer',
+      mentorPill: 'Field mentor for big cats & natural light',
+      image: '/images/vijay.jpeg',
+      bio: 'With over 5 years traversing primeval forests across India and Africa, Vijay Mathiew has dedicated his life to documenting elusive apex predators and fragile ecosystems.',
+      tags: ['5+ Years', 'Principal Mentor', 'Wild Specialist'],
+      instagram: 'https://www.instagram.com/vijaymathiew_photography?stkn=MXRxZW55ZDg3Z21pdw==',
+      instagramHandle: '@vijaymathiew_photography',
+    },
+    {
+      id: 'founder-jayavignesh',
+      name: 'Jayavignesh Hariharan',
+      displayName: 'Jayavignesh',
+      role: 'Founder of Jungle Voyages & Co-Founder',
+      mentorPill: 'Field mentor for safaris & birding',
+      image: '/images/jayavignesh.jpg',
+      bio: 'Founder of Jungle Voyages, passionate wildlife photographer and tour mentor with over a decade of field experience. He shares expert insights into birdlife, wildlife behavior, and photography techniques.',
+      tags: ['10+ Years', 'Safari Expert', 'Avifauna Specialist'],
+      instagram: 'https://www.instagram.com/jayavignesh_hariharan?stkn=Y3k2czVub3cwcDQz',
+      instagramHandle: '@jayavignesh_hariharan',
+    },
+  ]
 
-  const founder = founders[activeIdx] || founders[0]
+  const founder = founderList[activeIdx] || founderList[0]
 
   const handlePrev = () => {
-    setActiveIdx((prev) => (prev - 1 + founders.length) % founders.length)
+    setActiveIdx((prev) => (prev - 1 + founderList.length) % founderList.length)
   }
 
   const handleNext = () => {
-    setActiveIdx((prev) => (prev + 1) % founders.length)
+    setActiveIdx((prev) => (prev + 1) % founderList.length)
   }
 
   return (
-    <section id="founders" className="py-24 px-4 sm:px-8 md:px-16 bg-[#080a08] border-b border-[#20251f] select-none relative overflow-hidden">
-      {/* Background Ambience */}
-      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[600px] h-[350px] bg-[#B87333]/[0.03] blur-[150px] pointer-events-none" />
+    <section id="founders" className="py-24 px-4 sm:px-8 md:px-16 bg-gradient-to-b from-[#080908] via-[#0d110d] to-[#080908] border-t-2 border-b border-[#B87333]/30 select-none relative overflow-hidden">
+      {/* Background Ambient Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[#B87333]/[0.06] blur-[160px] pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">
-        {/* Section Tag */}
+        {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 mb-3">
             <span className="w-8 h-[1.5px] bg-[#B87333]" />
-            <span className="font-sans text-[10px] tracking-[0.25em] uppercase text-[#D6A85C] font-semibold">
+            <span className="font-sans text-[10.5px] tracking-[0.25em] uppercase text-[#D6A85C] font-semibold">
               FIELD LEADERSHIP & TOUR MENTORSHIP
             </span>
             <span className="w-8 h-[1.5px] bg-[#B87333]" />
@@ -35,10 +61,10 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
           </h2>
         </div>
 
-        {/* Big Size Founder Showcase Card (Reference Design) */}
+        {/* Big Size Founder Showcase Card */}
         <div className="relative">
           {/* Main Card */}
-          <div className="rounded-3xl bg-[#111511] border border-[#242923] shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[520px] transition-all duration-500">
+          <div className="rounded-3xl bg-[#111511] border border-[#D6A85C]/30 shadow-[0_20px_50px_rgba(0,0,0,0.85)] overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[520px] transition-all duration-500">
             {/* Left Half: Big Size Founder Photo */}
             <div className="lg:col-span-6 relative min-h-[380px] sm:min-h-[460px] lg:min-h-full overflow-hidden bg-[#0a0d0a] flex items-center justify-center">
               <img
@@ -52,7 +78,7 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
               {/* Gradient Vignette */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a0d0a] via-transparent to-transparent opacity-80 pointer-events-none" />
 
-              {/* Floating Bottom Badge (Exact match to reference) */}
+              {/* Floating Bottom Badge */}
               <div className="absolute bottom-6 left-6 right-6 sm:right-auto z-20 p-4 rounded-2xl bg-[#080a08]/90 backdrop-blur-md border border-[#242923] shadow-2xl max-w-[280px]">
                 <h4 className="font-serif text-sm font-semibold text-[#F2F0E8] leading-tight flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#D6A85C]" />
@@ -63,10 +89,10 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
                 </p>
               </div>
 
-              {/* Founder Switch Indicator on Mobile */}
+              {/* Founder Switch Indicator */}
               <div className="absolute top-4 left-4 z-20">
-                <span className="px-3 py-1 rounded-full bg-[#080a08]/85 text-[#D6A85C] text-[9px] font-sans tracking-widest uppercase font-bold border border-[#242923]">
-                  0{activeIdx + 1} / 0{founders.length}
+                <span className="px-3.5 py-1 rounded-full bg-[#080a08]/85 text-[#D6A85C] text-[9.5px] font-sans tracking-widest uppercase font-bold border border-[#D6A85C]/40 shadow-md">
+                  0{activeIdx + 1} / 0{founderList.length}
                 </span>
               </div>
             </div>
@@ -124,25 +150,27 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
                   </button>
                 </div>
 
-                {/* Footer Metadata & Social Links (Instagram & WhatsApp) */}
+                {/* Footer Metadata & Social Links */}
                 <div className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-2.5 flex-wrap">
                     {/* Instagram Link */}
-                    <a
-                      href={founder.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#161a16] border border-[#242923] hover:border-[#E1306C] text-[#F2F0E8] hover:text-[#E1306C] text-xs font-sans transition-all group"
-                      title="Follow on Instagram"
-                    >
-                      <svg className="w-3.5 h-3.5 text-[#E1306C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                      </svg>
-                      <span>{founder.instagramHandle}</span>
-                      <span className="text-[10px] text-[#A7A59B] group-hover:text-[#E1306C]">↗</span>
-                    </a>
+                    {founder.instagram && (
+                      <a
+                        href={founder.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#161a16] border border-[#242923] hover:border-[#E1306C] text-[#F2F0E8] hover:text-[#E1306C] text-xs font-sans transition-all group"
+                        title="Follow on Instagram"
+                      >
+                        <svg className="w-3.5 h-3.5 text-[#E1306C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                        <span>{founder.instagramHandle || '@vm_wild_expeditions'}</span>
+                        <span className="text-[10px] text-[#A7A59B] group-hover:text-[#E1306C]">↗</span>
+                      </a>
+                    )}
 
                     {/* WhatsApp Link */}
                     <a
@@ -194,7 +222,7 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
 
         {/* Carousel Pagination Dots */}
         <div className="flex items-center justify-center gap-2.5 mt-8">
-          {founders.map((f, i) => (
+          {founderList.map((f, i) => (
             <button
               key={f.id}
               onClick={() => setActiveIdx(i)}

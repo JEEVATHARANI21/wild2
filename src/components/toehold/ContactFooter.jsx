@@ -255,7 +255,7 @@ export default function ContactFooter({ openLegal, onPlanTrip }) {
 
         {/* Footer Bottom Line */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-sans text-[#A7A59B]/70">
-          <p>© {new Date().getFullYear()} {brand.siteName} Pvt Ltd. All Rights Reserved.</p>
+          <p>© {new Date().getFullYear()} {brand.siteName}. All Rights Reserved.</p>
           <div className="flex flex-wrap items-center gap-4">
             <button
               onClick={() => openLegal && openLegal('terms')}

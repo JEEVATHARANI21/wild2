@@ -47,13 +47,20 @@ export default function DnaCarousel({
   const autoSpinReq = useRef<number | null>(null);
 
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Hydration & Visibility IntersectionObserver safety
+  // Hydration, Mobile Check & Visibility IntersectionObserver safety
   useEffect(() => {
     setIsMounted(true);
 
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
     const el = containerRef.current;
-    if (!el) return;
+    if (!el) return () => window.removeEventListener("resize", checkMobile);
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -63,7 +70,10 @@ export default function DnaCarousel({
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+      observer.disconnect();
+    };
   }, []);
 
   // Auto-rotation loop (runs only when visible & auto-spin enabled)
@@ -142,10 +152,10 @@ export default function DnaCarousel({
     const baseAngle = globalIdx * angleStep + (isStrandB ? Math.PI : 0);
     const angle = baseAngle + (isMounted ? rotation : 0);
 
-    // Horizontal spread across width
-    const xRadius = 380; // horizontal wave width radius
-    const yRadius = 65;  // vertical climbing amplitude
-    const zRadius = 260; // 3D depth amplitude (-260 back to +260 front)
+    // Horizontal spread across width - Responsive for Mobile Viewports
+    const xRadius = isMobile ? 140 : 380; // horizontal wave width radius
+    const yRadius = isMobile ? 35 : 65;  // vertical climbing amplitude
+    const zRadius = isMobile ? 140 : 260; // 3D depth amplitude (-260 back to +260 front)
 
     const x = Math.sin(angle) * xRadius;
     const y = Math.cos(angle * 0.8) * yRadius + (isStrandB ? 25 : -25);
@@ -161,7 +171,7 @@ export default function DnaCarousel({
     // Lens optical blur & chromatic aberration calculation
     const blurAmount = Math.max((1 - depth) * 7, 0); // Far ones blurred
     const opacity = 0.35 + depth * 0.65;
-    const scale = 0.68 + depth * 0.38;
+    const scale = isMobile ? 0.72 + depth * 0.32 : 0.68 + depth * 0.38;
     const zIndex = Math.round(depth * 100);
 
     // Clean, deterministic formatting to prevent SSR/hydration float mismatches
@@ -199,9 +209,9 @@ export default function DnaCarousel({
           transformStyle: "preserve-3d",
         }}
       >
-        {/* Tall Portrait Card (Matching Reference Image) */}
+        {/* Responsive Portrait Card */}
         <div
-          className={`relative w-44 h-60 md:w-56 md:h-76 rounded-2xl overflow-hidden bg-[#111411] border transition-all duration-300 shadow-2xl ${
+          className={`relative w-32 h-44 sm:w-44 sm:h-60 md:w-56 md:h-76 rounded-xl md:rounded-2xl overflow-hidden bg-[#111411] border transition-all duration-300 shadow-2xl ${
             depth > 0.8
               ? "border-[#D6A85C] shadow-[0_10px_30px_rgba(214,168,92,0.4)]"
               : "border-white/15 group-hover:border-[#D6A85C]"
@@ -214,24 +224,24 @@ export default function DnaCarousel({
           />
 
           {/* Vignette & Card Content Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent p-3.5 flex flex-col justify-between pointer-events-none">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent p-2.5 sm:p-3.5 flex flex-col justify-between pointer-events-none">
             <div className="flex justify-between items-start pointer-events-auto">
-              <span className="px-2.5 py-0.5 rounded-full bg-black/60 border border-white/15 text-[9px] uppercase tracking-wider text-[#D6A85C] font-semibold backdrop-blur-md">
+              <span className="px-2 py-0.5 sm:px-2.5 rounded-full bg-black/60 border border-white/15 text-[8px] sm:text-[9px] uppercase tracking-wider text-[#D6A85C] font-semibold backdrop-blur-md">
                 {item.category || "Wild"}
               </span>
 
-              <div className="w-7 h-7 rounded-full bg-black/60 border border-white/15 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-md">
-                <Maximize2 className="w-3.5 h-3.5 text-[#D6A85C]" />
+              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-black/60 border border-white/15 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-md">
+                <Maximize2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#D6A85C]" />
               </div>
             </div>
 
-            <div className="space-y-1">
-              <h4 className="font-serif text-sm md:text-base text-white font-normal truncate">
+            <div className="space-y-0.5 sm:space-y-1">
+              <h4 className="font-serif text-xs sm:text-sm md:text-base text-white font-normal truncate">
                 {item.title}
               </h4>
               {item.location && (
-                <div className="text-[10.5px] text-[#A7A59B] flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-[#D6A85C]" />
+                <div className="text-[9px] sm:text-[10.5px] text-[#A7A59B] flex items-center gap-1">
+                  <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#D6A85C]" />
                   <span className="truncate">{item.location}</span>
                 </div>
               )}
@@ -243,10 +253,10 @@ export default function DnaCarousel({
   };
 
   return (
-    <div className="relative w-full rounded-3xl bg-[#080908] border border-[#20251f] overflow-hidden select-none p-4 md:p-8 shadow-2xl">
+    <div className="relative w-full rounded-3xl bg-[#080908] border border-[#20251f] overflow-hidden select-none p-3 sm:p-4 md:p-8 shadow-2xl">
       {/* Top Bar with 3D Pill Badge & Left/Right Navigation Controls */}
-      <div className="flex items-center justify-between z-20 relative mb-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/50 border border-white/20 backdrop-blur-md">
+      <div className="flex items-center justify-between z-20 relative mb-2 sm:mb-4">
+        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-black/50 border border-white/20 backdrop-blur-md">
           <span className="w-2 h-2 rounded-full bg-[#D6A85C] animate-pulse" />
           <span className="text-xs font-bold font-sans text-white uppercase tracking-widest">
             3D
@@ -254,33 +264,33 @@ export default function DnaCarousel({
         </div>
 
         {/* Controls: Prev Step, Play/Pause, Next Step */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <button
             onClick={handleStepLeft}
             aria-label="Rotate Helix Left"
-            className="w-8 h-8 rounded-full bg-black/50 border border-white/20 hover:border-[#D6A85C] hover:text-[#D6A85C] text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-md"
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/50 border border-white/20 hover:border-[#D6A85C] hover:text-[#D6A85C] text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-md"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
 
           <button
             onClick={() => setIsAutoSpin(!isAutoSpin)}
-            className={`px-3.5 py-1.5 rounded-full border text-xs font-sans flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md ${
+            className={`px-3 py-1 rounded-full border text-[11px] sm:text-xs font-sans flex items-center gap-1.5 sm:gap-2 transition-all cursor-pointer backdrop-blur-md ${
               isAutoSpin
                 ? "bg-[#D6A85C] text-[#080908] border-[#D6A85C] font-bold shadow-md"
                 : "bg-black/50 text-[#A7A59B] border-white/20 hover:text-white"
             }`}
           >
-            <RotateCw className={`w-3.5 h-3.5 ${isAutoSpin ? "animate-spin" : ""}`} />
-            <span>{isAutoSpin ? "AUTO-SPINNING" : "PAUSED (DRAG OR CLICK)"}</span>
+            <RotateCw className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${isAutoSpin ? "animate-spin" : ""}`} />
+            <span>{isAutoSpin ? "SPINNING" : "PAUSED"}</span>
           </button>
 
           <button
             onClick={handleStepRight}
             aria-label="Rotate Helix Right"
-            className="w-8 h-8 rounded-full bg-black/50 border border-white/20 hover:border-[#D6A85C] hover:text-[#D6A85C] text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-md"
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/50 border border-white/20 hover:border-[#D6A85C] hover:text-[#D6A85C] text-white flex items-center justify-center transition-all cursor-pointer backdrop-blur-md"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
         </div>
       </div>
@@ -292,7 +302,7 @@ export default function DnaCarousel({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
-        className="relative w-full h-[480px] md:h-[580px] cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden"
+        className="relative w-full h-[360px] md:h-[580px] cursor-grab active:cursor-grabbing flex items-center justify-center overflow-hidden"
         style={{ perspective: "1000px" }}
       >
         {/* Warm Backdrop Glow */}

@@ -216,7 +216,7 @@ export default function HeroVideo({
     <section
       ref={scrollTrackRef}
       className="hero-scroll-section relative w-full bg-[#080909]"
-      style={{ height: isReducedMotion ? "auto" : "350vh" }}
+      style={{ height: isReducedMotion ? "auto" : "180vh" }}
     >
       {/* HERO STICKY INNER CONTAINER */}
       <div

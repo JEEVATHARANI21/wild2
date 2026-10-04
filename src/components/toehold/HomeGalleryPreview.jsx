@@ -129,9 +129,6 @@ export default function HomeGalleryPreview({ onViewFullGallery, onNavigateToGall
         {/* MODE 1: DNA HELIX CAROUSEL */}
         {galleryViewMode === 'dna' ? (
           <div className="w-full relative">
-            <div className="text-center mb-2 text-xs font-sans uppercase tracking-[0.25em] text-[#D6A85C]/80">
-              🧬 3D DNA Double Helix • Drag or Scroll to rotate helix • Far images blurred & lens-fringed
-            </div>
             <DnaCarousel items={dnaItems} />
           </div>
         ) : (

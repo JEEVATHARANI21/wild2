@@ -165,7 +165,7 @@ function MainApp() {
           {/* 1. HEROIC SCROLL-LOCKED HERO VIDEO */}
           <HeroVideo
             src="/videos/hornbill-flight.mp4"
-            poster="https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1920&q=85"
+            poster="/images/hero-poster.png"
             eyebrow="THE PINNACLE OF WILDLIFE PHOTOGRAPHY"
             title={"Bespoke Photographic\nExpeditions"}
             description="Masterclass field tracking, intimate vehicular limits (max 4 per Gypsy), and deep animal behavior anticipation with expedition mentors across India & Africa’s wildest national parks."

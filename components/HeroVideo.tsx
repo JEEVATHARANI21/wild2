@@ -33,7 +33,7 @@ function mapRange(
 
 export default function HeroVideo({
   src = "/videos/hornbill-flight.mp4",
-  poster = "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1920&q=85",
+  poster = "/images/hero-poster.png",
   title = "WILD PLACES.\nREAL MOMENTS.",
   eyebrow = "WILDLIFE PHOTOGRAPHY SAFARIS",
   description = "Immersive wildlife photography journeys designed around extraordinary encounters.",

@@ -15,13 +15,13 @@ export default function FullGalleryView({ onBackToHome, onPlanTrip }) {
   return (
     <div className="min-h-screen bg-[#080908] text-[#F2F0E8] pt-24 pb-28">
       {/* Top Breadcrumb / Back Bar */}
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-12 mb-8 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-12 mb-8 flex items-center justify-between border-b border-[#242923] pb-4">
         <button
           onClick={onBackToHome}
-          className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-wider text-[#A7A59B] hover:text-[#D6A85C] transition-colors cursor-pointer py-2 group"
+          className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-widest px-4 py-2 rounded-full bg-[#151815] border border-[#D6A85C]/60 text-[#D6A85C] hover:bg-[#D6A85C] hover:text-[#080908] font-bold transition-all duration-300 shadow-md cursor-pointer group"
         >
-          <span className="group-hover:-translate-x-1 transition-transform">←</span>
-          <span>Back to Home</span>
+          <span className="group-hover:-translate-x-1 transition-transform font-bold">←</span>
+          <span>Back to Main Homepage</span>
         </button>
 
         <span className="text-[11px] font-sans text-[#D6A85C] uppercase tracking-widest font-semibold">

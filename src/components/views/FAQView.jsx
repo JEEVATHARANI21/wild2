@@ -99,10 +99,10 @@ export default function FAQView({ onBackToHome, onPlanTrip }) {
       <div className="max-w-5xl mx-auto px-5 sm:px-8 mb-8 flex items-center justify-between border-b border-[#242923] pb-4">
         <button
           onClick={onBackToHome}
-          className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-widest text-[#A7A59B] hover:text-[#D6A85C] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-widest px-4 py-2 rounded-full bg-[#151815] border border-[#D6A85C]/60 text-[#D6A85C] hover:bg-[#D6A85C] hover:text-[#080908] font-bold transition-all duration-300 shadow-md cursor-pointer group"
         >
-          <span>←</span>
-          <span>Back to Home</span>
+          <span className="group-hover:-translate-x-1 transition-transform font-bold">←</span>
+          <span>Back to Main Homepage</span>
         </button>
 
         <span className="text-xs font-sans text-[#D6A85C] uppercase tracking-wider font-semibold">
@@ -151,7 +151,7 @@ export default function FAQView({ onBackToHome, onPlanTrip }) {
 
       {/* FAQ Accordion List */}
       <div className="max-w-4xl mx-auto px-5 sm:px-8 md:px-12">
-        <div className="space-y-4">
+        <div className="space-y-4 font-sans">
           {filteredFaqs.map((faq, idx) => {
             const isOpen = openIndex === idx
             return (
@@ -221,7 +221,7 @@ export default function FAQView({ onBackToHome, onPlanTrip }) {
         </div>
 
         {/* Still Have Questions CTA */}
-        <div className="p-8 sm:p-12 rounded-3xl bg-[#151815] border border-[#242923] text-center">
+        <div className="p-8 sm:p-12 mt-12 rounded-3xl bg-[#151815] border border-[#242923] text-center">
           <h2 className="font-serif text-2xl sm:text-3xl text-[#F2F0E8] mb-3">
             Still Have Questions?
           </h2>

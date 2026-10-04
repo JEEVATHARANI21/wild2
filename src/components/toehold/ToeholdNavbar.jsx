@@ -77,28 +77,41 @@ export default function ToeholdNavbar({
     >
       <div className="max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-between gap-4">
         {/* 1. Logo, Name & Tagline */}
-        <a
-          href="#"
-          onClick={handleLogoClick}
-          className="flex items-center gap-3 group no-underline flex-shrink-0"
-          title={`${brand.siteName} — ${brand.tagline}`}
-        >
-          <img
-            src={brand.logoUrl || '/logo-clean.png'}
-            alt={`${brand.siteName} Logo`}
-            className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-md flex-shrink-0"
-          />
-          <div className="flex flex-col border-l border-[#242923] pl-2.5 sm:pl-3 py-0.5 flex-shrink-0">
-            <span className="font-serif text-[11.5px] sm:text-[14px] tracking-[0.14em] sm:tracking-[0.18em] uppercase text-[#D6A85C] font-semibold leading-tight whitespace-nowrap">
-              {brand.siteName}
-            </span>
-            <span className="hidden sm:block font-sans text-[8.5px] sm:text-[9.5px] tracking-[0.24em] uppercase text-[#B87333] font-light mt-0.5 whitespace-nowrap">
-              {brand.tagline}
-            </span>
-          </div>
-        </a>
+        <div className="flex items-center gap-3">
+          <a
+            href="#"
+            onClick={handleLogoClick}
+            className="flex items-center gap-3 group no-underline flex-shrink-0"
+            title={`${brand.siteName} — ${brand.tagline}`}
+          >
+            <img
+              src={brand.logoUrl || '/logo-clean.png'}
+              alt={`${brand.siteName} Logo`}
+              className="h-10 sm:h-11 md:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-md flex-shrink-0"
+            />
+            <div className="flex flex-col border-l border-[#242923] pl-2.5 sm:pl-3 py-0.5 flex-shrink-0">
+              <span className="font-serif text-[11.5px] sm:text-[14px] tracking-[0.14em] sm:tracking-[0.18em] uppercase text-[#D6A85C] font-semibold leading-tight whitespace-nowrap">
+                {brand.siteName}
+              </span>
+              <span className="hidden sm:block font-sans text-[8.5px] sm:text-[9.5px] tracking-[0.24em] uppercase text-[#B87333] font-light mt-0.5 whitespace-nowrap">
+                {brand.tagline}
+              </span>
+            </div>
+          </a>
 
-        {/* 2. Exact User Requested Navigation: Destinations, Gallery, About, FAQ, Contact */}
+          {/* Prominent Back Button when on any inner page */}
+          {currentView !== 'home' && (
+            <button
+              onClick={() => onNavigate && onNavigate('home')}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#151815] border border-[#D6A85C]/60 text-[#D6A85C] hover:bg-[#D6A85C] hover:text-[#080908] text-[11px] font-sans font-bold uppercase tracking-wider transition-all duration-300 shadow-md ml-2 cursor-pointer"
+            >
+              <span>←</span>
+              <span>Back to Home</span>
+            </button>
+          )}
+        </div>
+
+        {/* 2. Navigation Items: Destinations, Gallery, About, FAQ, Contact */}
         <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-[12px] font-sans tracking-[0.16em] uppercase font-medium">
           <button
             type="button"
@@ -262,6 +275,19 @@ export default function ToeholdNavbar({
         </div>
 
         <div className="flex flex-col gap-3 py-6 my-auto text-left">
+          {currentView !== 'home' && (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false)
+                if (onNavigate) onNavigate('home')
+              }}
+              className="py-3 px-4 rounded-xl bg-[#151815] border border-[#D6A85C] text-[#D6A85C] font-serif text-xl flex items-center justify-between text-left cursor-pointer mb-2"
+            >
+              <span>← Back to Homepage</span>
+              <span>🏠</span>
+            </button>
+          )}
+
           <button
             onClick={() => handleNav('destinations')}
             className="py-3 border-b border-[#242923]/60 font-serif text-2xl text-[#F2F0E8] hover:text-[#D6A85C] flex items-center justify-between text-left cursor-pointer"

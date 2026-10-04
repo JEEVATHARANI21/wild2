@@ -119,10 +119,10 @@ export default function ItineraryView({ tour, onBack, onPlanTrip, openLegal }) {
       <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-12 py-4 flex items-center justify-between border-b border-[#242923]">
         <button
           onClick={onBack}
-          className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-widest text-[#A7A59B] hover:text-[#D6A85C] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-widest px-4 py-2 rounded-full bg-[#151815] border border-[#D6A85C]/60 text-[#D6A85C] hover:bg-[#D6A85C] hover:text-[#080908] font-bold transition-all duration-300 shadow-md cursor-pointer group"
         >
-          <span>←</span>
-          <span>Back to All Expeditions</span>
+          <span className="group-hover:-translate-x-1 transition-transform font-bold">←</span>
+          <span>Back to Main Homepage</span>
         </button>
 
         <span className="text-xs font-sans text-[#D6A85C] uppercase tracking-wider font-semibold">
@@ -261,8 +261,6 @@ export default function ItineraryView({ tour, onBack, onPlanTrip, openLegal }) {
               </p>
             </div>
 
-
-
             {/* Day by Day Section */}
             <div>
               <h3 className="font-serif text-2xl sm:text-3xl text-[#F2F0E8] mb-8 font-light flex items-center gap-3">
@@ -272,7 +270,7 @@ export default function ItineraryView({ tour, onBack, onPlanTrip, openLegal }) {
                 </span>
               </h3>
 
-              <div className="space-y-6">
+              <div className="space-y-6 font-sans">
                 {days.map((item, idx) => (
                   <div key={idx} className="flex items-start gap-4 sm:gap-6 group">
                     {/* Day Number Badge */}
@@ -303,7 +301,7 @@ export default function ItineraryView({ tour, onBack, onPlanTrip, openLegal }) {
             </div>
           </div>
 
-          {/* Right Column: fototrails 365 Sidebar */}
+          {/* Right Column: Sidebar */}
           <div className="lg:col-span-4 space-y-6">
             {/* 1. Customise This Safari Box */}
             <div className="bg-[#151815] rounded-3xl border border-[#242923] p-6 sm:p-7 text-center shadow-xl">

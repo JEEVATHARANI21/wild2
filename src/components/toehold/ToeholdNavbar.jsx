@@ -98,17 +98,6 @@ export default function ToeholdNavbar({
               </span>
             </div>
           </a>
-
-          {/* Prominent Back Button when on any inner page */}
-          {currentView !== 'home' && (
-            <button
-              onClick={() => onNavigate && onNavigate('home')}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#151815] border border-[#D6A85C]/60 text-[#D6A85C] hover:bg-[#D6A85C] hover:text-[#080908] text-[11px] font-sans font-bold uppercase tracking-wider transition-all duration-300 shadow-md ml-2 cursor-pointer"
-            >
-              <span>←</span>
-              <span>Back to Home</span>
-            </button>
-          )}
         </div>
 
         {/* 2. Navigation Items: Destinations, Gallery, About, FAQ, Contact */}

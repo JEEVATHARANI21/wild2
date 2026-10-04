@@ -32,8 +32,9 @@ export default function HeroVideo({
   const [videoCompleted, setVideoCompleted] = useState(false);
   const videoCompletedRef = useRef(false);
   const [isReducedMotion, setIsReducedMotion] = useState(false);
+  const rafIdRef = useRef<number | null>(null);
 
-  // Sync ref with state for event listeners
+  // Keep ref synced with state for event listeners
   useEffect(() => {
     videoCompletedRef.current = videoCompleted;
   }, [videoCompleted]);
@@ -52,15 +53,17 @@ export default function HeroVideo({
       }
     };
 
+    video.addEventListener("loadedmetadata", primeVideo);
     video.addEventListener("loadeddata", primeVideo);
     if (video.readyState >= 2) primeVideo();
 
     return () => {
+      video.removeEventListener("loadedmetadata", primeVideo);
       video.removeEventListener("loadeddata", primeVideo);
     };
   }, [src]);
 
-  // Scroll Interaction & Clamping Handler
+  // Sync Video Playback with Scroll Position & Clamp Scroll Until Complete
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mediaQuery.matches) {
@@ -75,7 +78,6 @@ export default function HeroVideo({
     if (!video || !track) return;
 
     let isHeroVisible = true;
-    let scrollTimer: NodeJS.Timeout | null = null;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -107,42 +109,49 @@ export default function HeroVideo({
 
       setVideoProgress(rawProgress);
 
-      const isVideoEnded =
+      // Synchronize video currentTime directly with scroll progress if duration is available
+      if (video.duration && !isNaN(video.duration) && video.duration > 0) {
+        const targetTime = Math.min(
+          Math.max(rawProgress * video.duration, 0.01),
+          video.duration - 0.05
+        );
+
+        if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = requestAnimationFrame(() => {
+          if (video && Math.abs(video.currentTime - targetTime) > 0.02) {
+            video.currentTime = targetTime;
+          }
+        });
+      } else {
+        // Fallback if video duration metadata is not loaded yet
+        if (video.paused && !videoCompletedRef.current) {
+          video.muted = true;
+          video.playsInline = true;
+          video.play().catch(() => {});
+        }
+      }
+
+      // Mark hero completed ONLY when scroll reaches the end of hero track AND video is at final frame
+      const isFinished =
+        rawProgress >= 0.98 ||
         video.ended ||
         (video.duration > 0 && video.currentTime >= video.duration - 0.15);
 
-      if (isVideoEnded && !videoCompletedRef.current) {
+      if (isFinished && !videoCompletedRef.current) {
         setVideoCompleted(true);
         videoCompletedRef.current = true;
       }
 
-      // CRITICAL REQUIREMENT: Clamp scroll until video has completed.
-      // If user reaches/exceeds the end of the sticky hero track while video is incomplete,
-      // hold scroll position at maxScrollableDistance so Section 2 cannot be seen.
-      if (!videoCompletedRef.current && scrolledDistance >= maxScrollableDistance - 5) {
-        const targetTop = track.offsetTop + maxScrollableDistance;
-        if (window.scrollY > targetTop) {
+      // HARD SCROLL CLAMP: Hold scroll position at end of hero track if video is NOT finished
+      if (!videoCompletedRef.current && scrolledDistance >= maxScrollableDistance) {
+        const clampTop = track.offsetTop + maxScrollableDistance;
+        if (window.scrollY > clampTop) {
           window.scrollTo({
-            top: targetTop,
+            top: clampTop,
             behavior: "instant",
           });
         }
       }
-
-      // Play video while user is scrolling (if video is incomplete)
-      if (video.paused && !videoCompletedRef.current) {
-        video.muted = true;
-        video.playsInline = true;
-        video.play().catch(() => {});
-      }
-
-      // Pause video 150-200ms after scroll stops
-      if (scrollTimer) clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => {
-        if (video && !video.paused && !videoCompletedRef.current) {
-          video.pause();
-        }
-      }, 150);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -150,7 +159,7 @@ export default function HeroVideo({
     return () => {
       observer.disconnect();
       window.removeEventListener("scroll", handleScroll);
-      if (scrollTimer) clearTimeout(scrollTimer);
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
     };
   }, [src]);
 
@@ -177,14 +186,12 @@ export default function HeroVideo({
   };
 
   return (
-    /* HERO SCROLL CONTAINER (Dedicated Sticky Scroll Container) */
     <section
       ref={scrollTrackRef}
       className={`hero-scroll-container relative w-full bg-[#080909] ${
-        isReducedMotion ? "min-h-screen pt-24 pb-12" : "h-[350vh]"
+        isReducedMotion ? "min-h-screen pt-24 pb-12" : "h-[320vh]"
       }`}
     >
-      {/* HERO STICKY INNER CONTAINER */}
       <div
         className={`hero-sticky ${
           isReducedMotion
@@ -193,9 +200,7 @@ export default function HeroVideo({
         } flex flex-col items-center justify-center p-4 pt-20 md:p-8 md:pt-24 lg:p-12 lg:pt-24 z-10 transform-gpu will-change-transform`}
         style={{ transform: "translateZ(0)" }}
       >
-        {/* HERO CONTAINER CARD */}
         <div className="relative w-full max-w-[1500px] h-[78vh] md:h-[82vh] rounded-2xl md:rounded-[28px] overflow-hidden border border-white/15 bg-[#0e110e] shadow-[0_20px_50px_rgba(0,0,0,0.8)] group">
-          {/* Main Wildlife Video Element */}
           <video
             ref={videoRef}
             src={src}
@@ -211,7 +216,6 @@ export default function HeroVideo({
             }`}
           />
 
-          {/* Fallback Image / Ambient Backdrop */}
           {(hasError || !src) && (
             <div
               className="absolute inset-0 bg-cover bg-center"
@@ -219,18 +223,14 @@ export default function HeroVideo({
             />
           )}
 
-          {/* CINEMATIC GRADIENT OVERLAY */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#080909] via-black/40 to-black/50 pointer-events-none" />
 
-          {/* HERO DESIGN OVERLAY CONTENT */}
           <div className="absolute inset-0 z-10 flex flex-col justify-between p-6 md:p-12 lg:p-16 pointer-events-none">
-            {/* Top Bar: Eyebrow & Status */}
             <div className="pointer-events-auto flex items-center justify-between">
               <span className="inline-block text-[10.5px] md:text-xs uppercase tracking-[0.3em] text-[#D6A85C] font-semibold py-1.5 px-3.5 rounded-full border border-[#D6A85C]/35 bg-black/60 backdrop-blur-md shadow-md">
                 {eyebrow}
               </span>
 
-              {/* Status Indicator */}
               <div className="flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-black/70 border border-white/20 backdrop-blur-md text-[10px] uppercase tracking-[0.2em] text-[#F2F0E8] shadow-md">
                 {videoCompleted ? (
                   <>
@@ -246,7 +246,6 @@ export default function HeroVideo({
               </div>
             </div>
 
-            {/* Main Headline & CTAs */}
             <div className="max-w-3xl space-y-5 md:space-y-6 pointer-events-auto">
               <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.08] tracking-tight text-[#F2F0E8] whitespace-pre-line drop-shadow-xl">
                 {title}
@@ -280,7 +279,6 @@ export default function HeroVideo({
               </div>
             </div>
 
-            {/* Scroll Indicator */}
             <div
               className={`flex items-center justify-between text-xs tracking-[0.25em] text-[#F2F0E8]/70 uppercase pt-2 pointer-events-auto transition-opacity duration-500 ${
                 videoProgress >= 0.98 && videoCompleted ? "opacity-0" : "opacity-100"

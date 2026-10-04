@@ -55,42 +55,8 @@ export default function HomeGalleryPreview({ onViewFullGallery, onNavigateToGall
             </h2>
           </div>
 
-          {/* Category Filter Tabs & CTA */}
+          {/* CTA */}
           <div className="flex flex-wrap items-center gap-3">
-            {/* Species Filter Tabs */}
-            <div className="inline-flex items-center p-1 rounded-full bg-[#121512] border border-[#242923]">
-              <button
-                onClick={() => setActiveTab('all')}
-                className={`px-4 py-1.5 rounded-full text-xs font-sans uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-                  activeTab === 'all'
-                    ? 'bg-[#D6A85C] text-[#080908] font-bold shadow-md'
-                    : 'text-[#A7A59B] hover:text-[#F2F0E8]'
-                }`}
-              >
-                All ({GALLERY_IMAGES.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('Wild')}
-                className={`px-4 py-1.5 rounded-full text-xs font-sans uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-                  activeTab === 'Wild'
-                    ? 'bg-[#D6A85C] text-[#080908] font-bold shadow-md'
-                    : 'text-[#A7A59B] hover:text-[#F2F0E8]'
-                }`}
-              >
-                Mammals
-              </button>
-              <button
-                onClick={() => setActiveTab('Birds')}
-                className={`px-4 py-1.5 rounded-full text-xs font-sans uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-                  activeTab === 'Birds'
-                    ? 'bg-[#D6A85C] text-[#080908] font-bold shadow-md'
-                    : 'text-[#A7A59B] hover:text-[#F2F0E8]'
-                }`}
-              >
-                Birds
-              </button>
-            </div>
-
             <button
               onClick={handleViewGallery}
               className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] font-sans text-xs uppercase tracking-wider font-bold hover:shadow-[0_4px_25px_rgba(214,168,92,0.45)] hover:scale-102 transition-all cursor-pointer flex items-center gap-2"

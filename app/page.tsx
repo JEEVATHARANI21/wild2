@@ -164,7 +164,7 @@ function MainApp() {
         <main>
           {/* 1. HEROIC SCROLL-LOCKED HERO VIDEO */}
           <HeroVideo
-            src="/videos/IMG_8206.MOV"
+            src="/videos/home-hero.mp4"
             poster="/images/home-hero-poster.jpg"
             eyebrow="THE PINNACLE OF WILDLIFE PHOTOGRAPHY"
             title={"Bespoke Photographic\nExpeditions"}

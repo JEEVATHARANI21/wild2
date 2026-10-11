@@ -23,9 +23,8 @@ export default function ToursHero({ onPlanTrip }) {
           poster={hero.heroBgImage || '/images/home-hero-poster.jpg'}
           className="w-full h-full object-cover object-[center_35%] brightness-[0.88] contrast-[1.05]"
         >
-          <source src={hero.videoSrc || '/videos/IMG_8206.MOV'} type="video/quicktime" />
-          <source src="/videos/IMG_8206.MOV" type="video/quicktime" />
           <source src="/videos/home-hero.mp4" type="video/mp4" />
+          <source src="/videos/IMG_8206.MOV" type="video/quicktime" />
           <img
             src={hero.heroBgImage || '/images/home-hero-poster.jpg'}
             alt="Wild Bengal Tiger — VM Wild Expeditions"

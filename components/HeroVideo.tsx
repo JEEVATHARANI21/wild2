@@ -32,8 +32,8 @@ function mapRange(
 }
 
 export default function HeroVideo({
-  src = "/videos/hornbill-flight.mp4",
-  poster = "/images/hero-poster.png",
+  src = "/videos/IMG_8206.MOV",
+  poster = "/images/home-hero-poster.jpg",
   title = "WILD PLACES.\nREAL MOMENTS.",
   eyebrow = "WILDLIFE PHOTOGRAPHY SAFARIS",
   description = "Immersive wildlife photography journeys designed around extraordinary encounters.",
@@ -78,6 +78,7 @@ export default function HeroVideo({
 
     video.addEventListener("loadedmetadata", primeVideo);
     video.addEventListener("loadeddata", primeVideo);
+    video.load();
     if (video.readyState >= 2) primeVideo();
 
     return () => {
@@ -243,10 +244,9 @@ export default function HeroVideo({
       >
         {/* HERO CONTAINER CARD */}
         <div className="relative w-full max-w-[1500px] h-[78vh] md:h-[82vh] rounded-2xl md:rounded-[28px] overflow-hidden border border-white/15 bg-[#0e110e] shadow-[0_20px_50px_rgba(0,0,0,0.8)] group">
-          {/* Scroll-Scrubbed Video Element (no autoplay, no loop) */}
+          {/* Scroll-Scrubbed Video Element */}
           <video
             ref={videoRef}
-            src={src}
             poster={poster}
             muted
             playsInline
@@ -255,7 +255,16 @@ export default function HeroVideo({
             className={`w-full h-full object-cover transition-opacity duration-500 ${
               hasError ? "opacity-0" : "opacity-100"
             }`}
-          />
+          >
+            {src && (
+              <source
+                src={src}
+                type={src.toLowerCase().endsWith(".mov") ? "video/quicktime" : "video/mp4"}
+              />
+            )}
+            <source src="/videos/IMG_8206.MOV" type="video/quicktime" />
+            <source src="/videos/home-hero.mp4" type="video/mp4" />
+          </video>
 
           {/* Fallback Image / Ambient Backdrop */}
           {(hasError || !src) && (

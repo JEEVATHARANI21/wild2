@@ -7,20 +7,33 @@ export default function ToursHero({ onPlanTrip }) {
     headlinePart1: 'Go Where the Wild',
     headlinePart2: 'Still Roams.',
     description: "Expert-led wildlife and bird photography tours across India's most extraordinary wildernesses — designed for photographers, birders, and nature lovers who want more than a typical safari.",
-    heroBgImage: '/images/home-bg.png',
+    heroBgImage: '/images/home-hero-poster.jpg',
+    videoSrc: '/videos/IMG_8206.MOV',
   }
 
   return (
     <section className="relative w-full min-h-[90vh] sm:min-h-screen flex items-center overflow-hidden bg-[#080908] select-none">
-      {/* Background High-Impact Wildlife Photography Layer */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src={hero.heroBgImage || '/images/home-bg.png'}
-          alt="Wild Bengal Tiger — VM Wild Expeditions"
-          fetchPriority="high"
-          decoding="async"
-          className="w-full h-full object-cover object-[80%_35%] sm:object-[75%_center] md:object-[80%_center] lg:object-[84%_center] brightness-[0.88] contrast-[1.05]"
-        />
+      {/* Background High-Impact Wildlife Photography & Video Layer */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster={hero.heroBgImage || '/images/home-hero-poster.jpg'}
+          className="w-full h-full object-cover object-[center_35%] brightness-[0.88] contrast-[1.05]"
+        >
+          <source src={hero.videoSrc || '/videos/IMG_8206.MOV'} type="video/quicktime" />
+          <source src="/videos/IMG_8206.MOV" type="video/quicktime" />
+          <source src="/videos/home-hero.mp4" type="video/mp4" />
+          <img
+            src={hero.heroBgImage || '/images/home-hero-poster.jpg'}
+            alt="Wild Bengal Tiger — VM Wild Expeditions"
+            fetchPriority="high"
+            decoding="async"
+            className="w-full h-full object-cover object-[center_35%] brightness-[0.88] contrast-[1.05]"
+          />
+        </video>
 
         {/* Responsive Mobile & Desktop Gradients for Pristine Text Legibility */}
         {/* Mobile top-to-bottom dark gradient */}

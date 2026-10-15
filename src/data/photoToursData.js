@@ -1430,8 +1430,8 @@ export const TOURS_DATA = {
       hasCustomImage: true,
       instagram: 'https://www.instagram.com/vijaymathiew_photography?stkn=MXRxZW55ZDg3Z21pdw==',
       instagramHandle: '@vijaymathiew_photography',
-      bio: 'With over 5 years traversing primeval forests across India and Africa, Vijay Mathiew has dedicated his life to documenting elusive apex predators and fragile ecosystems. Known for his moody, atmospheric low-light aesthetic and deep field ethics, Vijay leads expeditions with an emphasis on animal anticipation, light sculpting, and intimate 1-on-1 mentorship.',
-      tags: ['5+ Years', 'Principal Mentor', 'Wild Specialist'],
+      bio: 'With 5+ years tracking apex predators across India, Vijay leads small-group expeditions focused on natural light, animal behavior, and hands-on 1-on-1 field mentoring.',
+      tags: ['5+ Years Field Exp', 'Big Cat Specialist', '1-on-1 Mentorship'],
       credentials: [
         '5+ Years Documenting Big Cats & Avifauna',
         '38+ National Parks & Wildlife Sanctuaries Explored',
@@ -1450,8 +1450,8 @@ export const TOURS_DATA = {
       hasCustomImage: true,
       instagram: 'https://www.instagram.com/jayavignesh_hariharan?stkn=Y3k2czVub3cwcDQz',
       instagramHandle: '@jayavignesh_hariharan',
-      bio: 'Founder of Jungle Voyages, passionate wildlife photographer and tour mentor with over a decade of field experience. He shares expert insights into birdlife, wildlife behavior, photography techniques and conservation.',
-      tags: ['10+ Years', 'Photography Mentor', 'Safari Expert'],
+      bio: 'Founder of Jungle Voyages with 10+ years in the field, Jayavignesh specializes in avian photography, habitat tracking, and ethical field coaching.',
+      tags: ['10+ Years Experience', 'Avian Specialist', 'Safari Mentor'],
       credentials: [
         'Founder of Jungle Voyages & Safari Mentor',
         'Over a Decade of Wilderness Field Experience',

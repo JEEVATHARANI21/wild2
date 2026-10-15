@@ -114,9 +114,9 @@ export default function ItineraryView({ tour, onBack, onPlanTrip, openLegal }) {
   ]
 
   return (
-    <div className="min-h-screen bg-[#080908] text-[#F2F0E8] pt-28 md:pt-32 pb-24 select-none">
+    <div className="min-h-screen bg-[#080908] text-[#F2F0E8] pt-20 sm:pt-24 pb-24 select-none">
       {/* Top Back Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 md:px-12 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#242923] relative z-30">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 py-3 flex items-center justify-between gap-3 border-b border-[#242923]/70 relative z-30">
         <button
           onClick={() => onBack && onBack()}
           className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-widest px-4 py-2 rounded-full bg-[#151815] border border-[#D6A85C]/60 text-[#D6A85C] hover:bg-[#D6A85C] hover:text-[#080908] font-bold transition-all duration-300 shadow-md cursor-pointer group"
@@ -131,47 +131,58 @@ export default function ItineraryView({ tour, onBack, onPlanTrip, openLegal }) {
       </div>
 
       {/* Hero Banner Section with Auto-Fading 4-Photo Slideshow */}
-      <section className="relative h-[55vh] min-h-[420px] md:h-[65vh] md:min-h-[500px] flex items-end overflow-hidden group select-none">
+      <section className="relative w-full h-[68vh] sm:h-[75vh] md:h-[82vh] min-h-[500px] md:min-h-[620px] flex items-end overflow-hidden group select-none bg-[#050605]">
         {/* Background Slides */}
         {slides.map((imgUrl, index) => (
           <div
             key={index}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === activeSlide ? 'opacity-100 z-0' : 'opacity-0 -z-10'
+              index === activeSlide ? 'opacity-100 z-0 pointer-events-auto' : 'opacity-0 -z-10 pointer-events-none'
             }`}
           >
+            {/* Ambient Blurred Background (seamlessly fills ultrawide/laptop screens) */}
             <img
               src={imgUrl}
-              alt={`${currentTour.packageName || currentTour.title} slide ${index + 1}`}
-              className="w-full h-full object-cover object-center md:object-[center_35%] brightness-[0.72] contrast-[1.04] transition-transform duration-[8000ms] ease-linear"
-              style={{
-                transform: index === activeSlide ? 'scale(1.02)' : 'scale(1.0)',
-              }}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-35 scale-110 brightness-40 pointer-events-none select-none"
             />
+
+            {/* Pristine Foreground Wildlife Photo (100% visible, centered, uncut) */}
+            <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-8 md:p-12 pb-24 sm:pb-28 md:pb-32 pointer-events-none">
+              <img
+                src={imgUrl}
+                alt={`${currentTour.packageName || currentTour.title} slide ${index + 1}`}
+                className="max-h-full max-w-full w-auto h-auto object-contain object-center drop-shadow-[0_25px_60px_rgba(0,0,0,0.95)] contrast-[1.03] transition-transform duration-[8000ms] ease-out"
+                style={{
+                  transform: index === activeSlide ? 'scale(1.02)' : 'scale(1.0)',
+                }}
+              />
+            </div>
           </div>
         ))}
 
-        {/* Dark Vignette & Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#080908] via-[#080908]/40 to-transparent z-10 pointer-events-none" />
+        {/* Dark Vignette & Subtle Gradient for Text Contrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#080908] via-[#080908]/75 via-35% to-transparent z-10 pointer-events-none" />
 
         {/* Previous / Next Arrow Buttons */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#080908]/65 hover:bg-[#D6A85C] border border-white/20 hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#080908] flex items-center justify-center text-lg transition-all opacity-0 group-hover:opacity-100 cursor-pointer backdrop-blur-md shadow-2xl"
+          className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#080908]/75 hover:bg-[#D6A85C] border border-white/20 hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#080908] flex items-center justify-center text-xl transition-all duration-300 opacity-80 group-hover:opacity-100 cursor-pointer backdrop-blur-md shadow-2xl"
           title="Previous Image"
         >
           ‹
         </button>
         <button
           onClick={nextSlide}
-          className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#080908]/65 hover:bg-[#D6A85C] border border-white/20 hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#080908] flex items-center justify-center text-lg transition-all opacity-0 group-hover:opacity-100 cursor-pointer backdrop-blur-md shadow-2xl"
+          className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#080908]/75 hover:bg-[#D6A85C] border border-white/20 hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#080908] flex items-center justify-center text-xl transition-all duration-300 opacity-80 group-hover:opacity-100 cursor-pointer backdrop-blur-md shadow-2xl"
           title="Next Image"
         >
           ›
         </button>
 
         {/* Slide Counter & Dot Controls (Bottom Right) */}
-        <div className="absolute bottom-6 right-5 sm:right-8 z-20 flex items-center gap-3 bg-[#080908]/75 backdrop-blur-md px-4 py-2 rounded-full border border-[#242923] shadow-2xl">
+        <div className="absolute bottom-6 right-5 sm:right-8 z-20 flex items-center gap-3 bg-[#080908]/85 backdrop-blur-md px-4 py-2 rounded-full border border-[#242923] shadow-2xl">
           <span className="font-mono text-xs text-[#D6A85C] tracking-widest font-semibold">
             0{activeSlide + 1} / 0{slides.length}
           </span>
@@ -192,16 +203,18 @@ export default function ItineraryView({ tour, onBack, onPlanTrip, openLegal }) {
         </div>
 
         {/* Hero Title & Information */}
-        <div className="relative z-20 max-w-7xl mx-auto px-5 sm:px-8 md:px-12 pb-14 w-full">
-          <span className="inline-block bg-[#D6A85C] text-[#080908] text-[10.5px] font-sans font-bold px-3 py-1 uppercase tracking-wider mb-3.5 rounded-full shadow-lg">
-            Sample Itinerary — All Tours Customised
-          </span>
-          <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl text-[#F2F0E8] leading-tight mb-2">
-            {currentTour.packageName || currentTour.title}
-          </h1>
-          <p className="font-sans text-[#A7A59B] text-sm sm:text-lg max-w-2xl font-light">
-            {currentTour.photoHighlight || currentTour.overview?.split('.')[0] + '.'}
-          </p>
+        <div className="relative z-20 max-w-7xl mx-auto px-5 sm:px-8 md:px-12 pb-7 sm:pb-9 w-full pointer-events-none">
+          <div className="pointer-events-auto max-w-3xl">
+            <span className="inline-block bg-[#D6A85C] text-[#080908] text-[10px] sm:text-[11px] font-sans font-bold px-3 py-1 uppercase tracking-wider mb-2.5 rounded-full shadow-lg">
+              Sample Itinerary — All Tours Customised
+            </span>
+            <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl text-[#F2F0E8] leading-tight mb-2 drop-shadow-md">
+              {currentTour.packageName || currentTour.title}
+            </h1>
+            <p className="font-sans text-[#D6A85C]/90 text-xs sm:text-sm md:text-base font-light max-w-2xl drop-shadow">
+              {currentTour.photoHighlight || currentTour.overview?.split('.')[0] + '.'}
+            </p>
+          </div>
         </div>
       </section>
 

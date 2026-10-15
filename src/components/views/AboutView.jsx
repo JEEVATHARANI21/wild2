@@ -25,9 +25,9 @@ export default function AboutView({ onBackToHome, onPlanTrip }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#080908] text-[#F2F0E8] pt-28 md:pt-32 pb-28 select-none">
+    <div className="min-h-screen bg-[#080908] text-[#F2F0E8] pt-20 sm:pt-24 pb-28 select-none">
       {/* Top Back Navigation Bar */}
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#242923] pb-4 relative z-30">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#242923]/70 pb-3 relative z-30">
         <button
           onClick={() => onBackToHome && onBackToHome()}
           className="inline-flex items-center gap-2 text-xs font-sans uppercase tracking-widest px-4 py-2 rounded-full bg-[#151815] border border-[#D6A85C]/60 text-[#D6A85C] hover:bg-[#D6A85C] hover:text-[#080908] font-bold transition-all duration-300 shadow-md cursor-pointer group"

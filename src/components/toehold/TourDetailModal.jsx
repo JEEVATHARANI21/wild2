@@ -35,23 +35,33 @@ export default function TourDetailModal({ tour, onClose }) {
           ✕
         </button>
 
-        {/* 1. Hero Image Header */}
-        <div className="relative w-full aspect-[21/9] sm:aspect-[16/7] overflow-hidden bg-[#080908]">
+        {/* 1. Hero Image Header with Full Image Visibility & Ambient Fill */}
+        <div className="relative w-full h-[260px] sm:h-[340px] md:h-[400px] overflow-hidden bg-[#080908]">
+          {/* Ambient blurred backdrop */}
           <img
             src={tour.heroImage}
-            alt={tour.title}
-            className="w-full h-full object-cover"
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 brightness-40 pointer-events-none"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#151815] via-transparent to-transparent" />
-          <div className="absolute bottom-4 left-6 right-6">
-            <span className="px-3 py-1 rounded-full bg-[#B87333] text-[#080908] font-sans text-[10px] font-bold tracking-widest uppercase mb-2 inline-block">
-              {tour.badge} · {tour.duration}
+          {/* Crisp centered wildlife photo - 100% visible, uncut */}
+          <div className="absolute inset-0 flex items-center justify-center p-3 sm:p-6 pb-20 sm:pb-24 pointer-events-none">
+            <img
+              src={tour.heroImage}
+              alt={tour.title}
+              className="max-h-full max-w-full w-auto h-auto object-contain object-center drop-shadow-2xl"
+            />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#151815] via-[#151815]/50 via-35% to-transparent z-10 pointer-events-none" />
+          <div className="absolute bottom-4 left-5 right-5 sm:left-7 sm:right-7 z-20 pointer-events-none">
+            <span className="px-3 py-1 rounded-full bg-[#B87333] text-[#080908] font-sans text-[10px] font-bold tracking-widest uppercase mb-2 inline-block shadow-md">
+              {tour.badge || 'Expedition'} · {tour.duration}
             </span>
-            <h2 className="font-serif text-2xl sm:text-4xl text-[#F2F0E8] leading-tight mb-1">
+            <h2 className="font-serif text-xl sm:text-3xl text-[#F2F0E8] leading-tight mb-1 drop-shadow-lg">
               {tour.title}
             </h2>
-            <span className="text-xs font-sans text-[#D6A85C]">
-              📍 {tour.destination} · 📅 Scheduled: {tour.dateRange}
+            <span className="text-xs font-sans text-[#D6A85C] block drop-shadow">
+              📍 {tour.destination} {tour.dateRange ? `· 📅 Scheduled: ${tour.dateRange}` : ''}
             </span>
           </div>
         </div>

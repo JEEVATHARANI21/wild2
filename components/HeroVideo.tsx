@@ -26,6 +26,9 @@ export default function HeroVideo({
 }: HeroVideoProps) {
   const containerRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const playPromiseRef = useRef<Promise<void> | null>(null);
+  const scrollPauseTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const touchStartYRef = useRef<number>(0);
 
   const [hasStarted, setHasStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -77,9 +80,80 @@ export default function HeroVideo({
     }
   }, [setScrollLock]);
 
-  // Helper: Complete the video and unlock the page
+  // Helper: Safely trigger video.play() handling promise & autoplay policies
+  const safePlay = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      video.muted = isMuted;
+      const promise = video.play();
+      if (promise !== undefined) {
+        playPromiseRef.current = promise;
+        promise
+          .then(() => {
+            playPromiseRef.current = null;
+            setIsPlaying(true);
+            isPlayingRef.current = true;
+          })
+          .catch((err: any) => {
+            playPromiseRef.current = null;
+            if (err?.name !== "AbortError") {
+              // If browser blocked unmuted playback, fallback to muted
+              video.muted = true;
+              setIsMuted(true);
+              video
+                .play()
+                .then(() => {
+                  setIsPlaying(true);
+                  isPlayingRef.current = true;
+                })
+                .catch(() => {});
+            }
+          });
+      }
+    }
+  }, [isMuted]);
+
+  // Helper: Safely trigger video.pause() without race condition conflicts with pending play promises
+  const safePause = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const pauseNow = () => {
+      if (!video.paused) {
+        video.pause();
+      }
+      setIsPlaying(false);
+      isPlayingRef.current = false;
+    };
+
+    if (playPromiseRef.current) {
+      playPromiseRef.current
+        .then(() => {
+          pauseNow();
+        })
+        .catch(() => {
+          pauseNow();
+        });
+    } else {
+      pauseNow();
+    }
+  }, []);
+
+  // Helper: Complete the video and unlock the page for natural scrolling
   const handleVideoCompletion = useCallback(() => {
     if (isCompletedRef.current) return;
+
+    if (scrollPauseTimerRef.current) {
+      clearTimeout(scrollPauseTimerRef.current);
+      scrollPauseTimerRef.current = null;
+    }
+
+    const video = videoRef.current;
+    if (video && !video.paused) {
+      video.pause();
+    }
 
     setIsCompleted(true);
     isCompletedRef.current = true;
@@ -88,48 +162,36 @@ export default function HeroVideo({
     isPlayingRef.current = false;
     setProgress(1);
 
-    // 6. Unlock scrolling after completion
+    // 3. Unlock scrolling after video completion
     setScrollLock(false);
+  }, [setScrollLock]);
 
-    // Smoothly scroll down to the second section (#founders)
-    setTimeout(() => {
-      scrollToFounders();
-    }, 400);
-  }, [setScrollLock, scrollToFounders]);
-
-  // Helper: Begin playing the video on scroll
-  const startVideoPlayback = useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
+  // Helper: Scroll activity detection — play on scroll, pause when scrolling stops
+  const handleScrollActivity = useCallback(() => {
+    if (isCompletedRef.current) return;
 
     if (!hasStartedRef.current) {
       setHasStarted(true);
       hasStartedRef.current = true;
     }
 
-    // 3 & 5. Keep sticky & prevent scrolling to next section while video plays
-    if (!isCompletedRef.current) {
-      setScrollLock(true);
+    // Keep sticky & locked while video is playing
+    setScrollLock(true);
+
+    // Resume or start playing from current timestamp
+    safePlay();
+
+    // Reset inactivity timer (~200ms threshold to prevent flickering during normal scroll gestures)
+    if (scrollPauseTimerRef.current) {
+      clearTimeout(scrollPauseTimerRef.current);
     }
 
-    video.muted = isMuted;
-    video
-      .play()
-      .then(() => {
-        setIsPlaying(true);
-        isPlayingRef.current = true;
-      })
-      .catch(() => {
-        video.muted = true;
-        video
-          .play()
-          .then(() => {
-            setIsPlaying(true);
-            isPlayingRef.current = true;
-          })
-          .catch(() => {});
-      });
-  }, [isMuted, setScrollLock]);
+    scrollPauseTimerRef.current = setTimeout(() => {
+      if (!isCompletedRef.current) {
+        safePause();
+      }
+    }, 200);
+  }, [safePlay, safePause, setScrollLock]);
 
   // 1. Initial State: Disable autoplay on page load.
   // Video remains paused at frame 0 until the user starts scrolling.
@@ -151,13 +213,13 @@ export default function HeroVideo({
     video.addEventListener("loadeddata", primeFrame);
     if (video.readyState >= 2) primeFrame();
 
-    // 4. Play video until completion without interruption
+    // Track playback progress & trigger completion when finished
     const onTimeUpdate = () => {
       if (!video || !video.duration || isNaN(video.duration)) return;
       const cur = Math.min(video.currentTime / video.duration, 1);
       setProgress(cur);
 
-      if (cur >= 0.97 && !isCompletedRef.current) {
+      if (cur >= 0.985 && !isCompletedRef.current) {
         handleVideoCompletion();
       }
     };
@@ -169,100 +231,120 @@ export default function HeroVideo({
     video.addEventListener("timeupdate", onTimeUpdate);
     video.addEventListener("ended", onEnded);
 
+    if (!isCompletedRef.current) {
+      setScrollLock(true);
+    }
+
     return () => {
       video.removeEventListener("loadedmetadata", primeFrame);
       video.removeEventListener("loadeddata", primeFrame);
       video.removeEventListener("timeupdate", onTimeUpdate);
       video.removeEventListener("ended", onEnded);
+      if (scrollPauseTimerRef.current) {
+        clearTimeout(scrollPauseTimerRef.current);
+      }
+      setScrollLock(false);
     };
-  }, [handleVideoCompletion]);
+  }, [handleVideoCompletion, setScrollLock]);
 
-  // 2, 3, 5, 7. Scroll Detection & Viewport Lock Engine:
-  // - On initial scroll, triggers video playback and locks sticky section in view.
-  // - While video is playing, prevents next section from appearing.
-  // - After completion or on reverse scrolling, handles state smoothly.
+  // 2 & 4. Scroll Detection & Viewport Sticky Engine (Desktop, Mobile, Trackpads, Keyboards):
+  // - Plays video when user is scrolling
+  // - Pauses immediately when user stops scrolling
+  // - Resumes from current playback position when user scrolls again
+  // - Keeps hero sticky and next section hidden until video reaches end
   useEffect(() => {
-    // Wheel event handler
+    // Wheel event handler (mouse wheel & trackpad)
     const onWheel = (e: WheelEvent) => {
-      // If user has already navigated down the page, allow normal scrolling
-      if (window.scrollY > 25) return;
+      // If completed and user has scrolled down into subsequent sections, allow normal scrolling
+      if (isCompletedRef.current && window.scrollY > 20) return;
 
       // 7. Handle reverse scrolling: If already completed once, allow free scrolling
       if (hasCompletedOnceRef.current) return;
 
-      // 2. When user starts scrolling, begin playing video automatically
-      if (!hasStartedRef.current && !isCompletedRef.current) {
+      // While video is incomplete:
+      if (!isCompletedRef.current) {
         e.preventDefault();
         e.stopPropagation();
-        startVideoPlayback();
-        return;
-      }
 
-      // 5. Prevent scrolling to next section while video is playing
-      if (isLockedRef.current || (isPlayingRef.current && !isCompletedRef.current)) {
-        e.preventDefault();
-        e.stopPropagation();
+        if (e.deltaY > 0) {
+          // Scrolling down: play video
+          handleScrollActivity();
+        } else if (e.deltaY < -15) {
+          // Scrolling up: pause video
+          safePause();
+        }
       }
     };
 
-    // Mobile touch handler
-    let touchStartY = 0;
+    // Mobile touch handlers
     const onTouchStart = (e: TouchEvent) => {
       if (e.touches && e.touches[0]) {
-        touchStartY = e.touches[0].clientY;
+        touchStartYRef.current = e.touches[0].clientY;
       }
     };
 
     const onTouchMove = (e: TouchEvent) => {
-      if (window.scrollY > 25) return;
+      if (isCompletedRef.current && window.scrollY > 20) return;
       if (hasCompletedOnceRef.current) return;
 
-      if (!hasStartedRef.current && !isCompletedRef.current) {
-        const deltaY = touchStartY - e.touches[0].clientY;
-        if (Math.abs(deltaY) > 5) {
-          e.preventDefault();
-          e.stopPropagation();
-          startVideoPlayback();
-          return;
-        }
-      }
-
-      if (isLockedRef.current || (isPlayingRef.current && !isCompletedRef.current)) {
+      if (!isCompletedRef.current) {
         e.preventDefault();
         e.stopPropagation();
+
+        if (e.touches && e.touches[0]) {
+          const deltaY = touchStartYRef.current - e.touches[0].clientY;
+          if (deltaY > 4) {
+            handleScrollActivity();
+          } else if (deltaY < -15) {
+            safePause();
+          }
+        }
       }
     };
 
-    // Keyboard handler (ArrowDown, PageDown, Space)
+    const onTouchEnd = () => {
+      if (!isCompletedRef.current) {
+        safePause();
+      }
+    };
+
+    // Keyboard handlers (ArrowDown, PageDown, Space)
     const onKeyDown = (e: KeyboardEvent) => {
-      if (window.scrollY > 25) return;
+      if (isCompletedRef.current) return;
       if (hasCompletedOnceRef.current) return;
 
       if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
-        if (!hasStartedRef.current && !isCompletedRef.current) {
-          e.preventDefault();
-          startVideoPlayback();
-          return;
-        }
+        e.preventDefault();
+        handleScrollActivity();
+      } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+        e.preventDefault();
+        safePause();
+      }
+    };
 
-        if (isLockedRef.current || (isPlayingRef.current && !isCompletedRef.current)) {
-          e.preventDefault();
-        }
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (isCompletedRef.current) return;
+      if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
+        safePause();
       }
     };
 
     window.addEventListener("wheel", onWheel, { passive: false, capture: true });
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false, capture: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
     window.addEventListener("keydown", onKeyDown, { capture: true });
+    window.addEventListener("keyup", onKeyUp, { capture: true });
 
     return () => {
       window.removeEventListener("wheel", onWheel, { capture: true });
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove, { capture: true });
+      window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("keydown", onKeyDown, { capture: true });
+      window.removeEventListener("keyup", onKeyUp, { capture: true });
     };
-  }, [startVideoPlayback]);
+  }, [handleScrollActivity, safePause]);
 
   // Sound toggle
   const toggleMute = useCallback(() => {
@@ -284,25 +366,19 @@ export default function HeroVideo({
     setIsCompleted(false);
     isCompletedRef.current = false;
     hasCompletedOnceRef.current = false;
+    setHasStarted(false);
+    hasStartedRef.current = false;
 
     setScrollLock(true);
-    video
-      .play()
-      .then(() => {
-        setIsPlaying(true);
-        isPlayingRef.current = true;
-        setHasStarted(true);
-        hasStartedRef.current = true;
-      })
-      .catch(() => {});
-  }, [setScrollLock]);
+    safePause();
+  }, [setScrollLock, safePause]);
 
   const progressPercent = Math.round(progress * 100);
 
   return (
     <section
       ref={containerRef}
-      className="relative w-full h-screen min-h-[620px] overflow-hidden select-none bg-[#060806] flex items-center"
+      className="sticky top-0 w-full h-screen min-h-[620px] overflow-hidden select-none bg-[#060806] flex items-center z-10"
     >
       {/* FULLSCREEN ROYAL BENGAL TIGER VIDEO BACKGROUND */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -333,11 +409,17 @@ export default function HeroVideo({
 
       {/* TOP-RIGHT CONTROLS: Scroll Status Guidance & Sound Toggle */}
       <div className="absolute top-20 sm:top-24 right-5 sm:right-10 md:right-14 z-20 flex items-center gap-2.5 pointer-events-auto">
-        {/* Scroll to Play Guidance Badge */}
-        {!hasStarted && (
-          <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-[#D6A85C]/40 backdrop-blur-md text-[10px] uppercase tracking-[0.2em] text-[#D6A85C] shadow-lg animate-pulse">
-            <MousePointer className="w-3 h-3 text-[#D6A85C]" />
-            <span>SCROLL TO PLAY VIDEO</span>
+        {/* Scroll Status Guidance Badge */}
+        {!isCompleted && (
+          <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-[#D6A85C]/40 backdrop-blur-md text-[10px] uppercase tracking-[0.2em] text-[#D6A85C] shadow-lg">
+            <MousePointer className={`w-3 h-3 text-[#D6A85C] ${isPlaying ? "animate-pulse" : ""}`} />
+            <span>
+              {isPlaying
+                ? `PLAYING ON SCROLL • ${progressPercent}%`
+                : hasStarted
+                ? `PAUSED • SCROLL TO RESUME (${progressPercent}%)`
+                : "SCROLL TO PLAY VIDEO"}
+            </span>
           </div>
         )}
 
@@ -449,14 +531,22 @@ export default function HeroVideo({
         <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/15 backdrop-blur-md shadow-md">
           <span
             className={`w-2 h-2 rounded-full ${
-              isCompleted ? "bg-emerald-400" : isPlaying ? "bg-[#D6A85C] animate-pulse" : "bg-white/40"
+              isCompleted
+                ? "bg-emerald-400"
+                : isPlaying
+                ? "bg-[#D6A85C] animate-pulse"
+                : hasStarted
+                ? "bg-amber-400/80"
+                : "bg-white/40"
             }`}
           />
           <span className="text-[10px] text-[#D6A85C] font-semibold tracking-[0.2em]">
             {isCompleted
               ? "VIDEO 100% COMPLETE • UNLOCKED FOR 2ND SECTION"
               : isPlaying
-              ? `PLAYING TO COMPLETION • ${progressPercent}%`
+              ? `PLAYING ON SCROLL • ${progressPercent}%`
+              : hasStarted
+              ? `PAUSED • SCROLL TO RESUME (${progressPercent}%)`
               : "SCROLL TO PLAY VIDEO"}
           </span>
         </div>
@@ -475,11 +565,19 @@ export default function HeroVideo({
             {isCompleted
               ? "CONTINUE TO 2ND SECTION (FOUNDERS) ↓"
               : isPlaying
-              ? `PLAYING VIDEO (${progressPercent}%) ↓`
+              ? `SCROLLING TO PLAY (${progressPercent}%) ↓`
+              : hasStarted
+              ? `RESUME ON SCROLL (${progressPercent}%) ↓`
               : "SCROLL TO PLAY VIDEO ↓"}
           </span>
           <ChevronDown
-            className={`w-3.5 h-3.5 ${isCompleted ? "text-[#080908]" : "text-[#D6A85C] animate-bounce"}`}
+            className={`w-3.5 h-3.5 ${
+              isCompleted
+                ? "text-[#080908]"
+                : isPlaying
+                ? "text-[#D6A85C] animate-bounce"
+                : "text-[#D6A85C]"
+            }`}
           />
         </button>
       </div>

@@ -42,21 +42,21 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
   }
 
   return (
-    <section id="founders" className="py-14 sm:py-16 md:py-20 px-4 sm:px-6 md:px-10 bg-gradient-to-b from-[#080908] via-[#0d110d] to-[#080908] border-t border-b border-[#B87333]/30 select-none relative overflow-hidden">
+    <section id="founders" className="min-h-screen flex flex-col justify-center py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-10 bg-gradient-to-b from-[#080908] via-[#0d110d] to-[#080908] border-t border-b border-[#B87333]/30 select-none relative overflow-hidden">
       {/* Background Ambient Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-[#B87333]/[0.05] blur-[140px] pointer-events-none" />
 
-      <div className="max-w-5xl mx-auto relative z-10">
+      <div className="max-w-4xl lg:max-w-5xl mx-auto relative z-10 w-full">
         {/* Section Header */}
-        <div className="text-center max-w-xl mx-auto mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 mb-2.5">
-            <span className="w-6 sm:w-8 h-[1.5px] bg-[#B87333]" />
-            <span className="font-sans text-[10px] sm:text-[10.5px] tracking-[0.25em] uppercase text-[#D6A85C] font-semibold">
+        <div className="text-center max-w-xl mx-auto mb-4 sm:mb-5">
+          <div className="inline-flex items-center gap-2 mb-1.5">
+            <span className="w-5 sm:w-6 h-[1.5px] bg-[#B87333]" />
+            <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.24em] uppercase text-[#D6A85C] font-semibold">
               FIELD LEADERSHIP & TOUR MENTORSHIP
             </span>
-            <span className="w-6 sm:w-8 h-[1.5px] bg-[#B87333]" />
+            <span className="w-5 sm:w-6 h-[1.5px] bg-[#B87333]" />
           </div>
-          <h2 className="font-serif text-2xl sm:text-4xl text-[#F2F0E8] font-light leading-tight">
+          <h2 className="font-serif text-xl sm:text-2xl md:text-3xl text-[#F2F0E8] font-light leading-tight">
             Meet Our <span className="italic text-[#D6A85C] font-normal">Expedition Leaders</span>
           </h2>
         </div>
@@ -64,9 +64,9 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
         {/* Compact Founder Showcase Card */}
         <div className="relative">
           {/* Main Card */}
-          <div className="rounded-2xl sm:rounded-3xl bg-[#111511] border border-[#D6A85C]/30 shadow-[0_15px_40px_rgba(0,0,0,0.85)] overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[400px] sm:min-h-[440px] transition-all duration-500">
+          <div className="rounded-2xl sm:rounded-3xl bg-[#111511] border border-[#D6A85C]/30 shadow-[0_15px_40px_rgba(0,0,0,0.85)] overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[340px] sm:min-h-[360px] lg:h-[390px] transition-all duration-500">
             {/* Left Half: Founder Photo */}
-            <div className="lg:col-span-6 relative min-h-[300px] sm:min-h-[380px] lg:min-h-[440px] overflow-hidden bg-[#0a0d0a] flex items-center justify-center">
+            <div className="lg:col-span-5 relative min-h-[220px] sm:min-h-[280px] lg:h-full overflow-hidden bg-[#0a0d0a] flex items-center justify-center">
               <img
                 key={founder.id}
                 src={founder.image}
@@ -76,37 +76,37 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
               />
 
               {/* Gradient Vignette */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0d0a] via-transparent to-transparent opacity-80 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0d0a]/90 via-transparent to-transparent pointer-events-none" />
 
               {/* Floating Bottom Badge */}
-              <div className="absolute bottom-4 sm:bottom-5 left-4 sm:left-5 right-4 sm:right-auto z-20 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-[#080a08]/90 backdrop-blur-md border border-[#242923] shadow-xl max-w-[250px]">
-                <h4 className="font-serif text-xs sm:text-sm font-semibold text-[#F2F0E8] leading-tight flex items-center gap-1.5">
+              <div className="absolute bottom-3 left-3 right-3 sm:right-auto z-20 p-2.5 sm:p-3 rounded-xl bg-[#080a08]/90 backdrop-blur-md border border-[#242923] shadow-xl max-w-[220px]">
+                <h4 className="font-serif text-xs font-semibold text-[#F2F0E8] leading-tight flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#D6A85C]" />
                   <span>Wildlife Photographer</span>
                 </h4>
-                <p className="font-sans text-[10px] sm:text-[11px] text-[#A7A59B] mt-1 leading-snug">
+                <p className="font-sans text-[10px] text-[#A7A59B] mt-0.5 leading-snug">
                   {founder.mentorPill || 'Field mentor for safaris & birding'}
                 </p>
               </div>
 
               {/* Founder Switch Indicator */}
-              <div className="absolute top-4 left-4 z-20">
-                <span className="px-3 py-0.5 rounded-full bg-[#080a08]/85 text-[#D6A85C] text-[9px] font-sans tracking-widest uppercase font-bold border border-[#D6A85C]/40 shadow-md">
+              <div className="absolute top-3 left-3 z-20">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#080a08]/85 text-[#D6A85C] text-[9px] font-sans tracking-widest uppercase font-bold border border-[#D6A85C]/40 shadow-md">
                   0{activeIdx + 1} / 0{founderList.length}
                 </span>
               </div>
             </div>
 
             {/* Right Half: Details & Actions */}
-            <div className="lg:col-span-6 p-5 sm:p-7 md:p-8 flex flex-col justify-between bg-gradient-to-br from-[#121612] to-[#0c0f0c]">
+            <div className="lg:col-span-7 p-4 sm:p-5 md:p-6 lg:p-7 flex flex-col justify-between bg-gradient-to-br from-[#121612] to-[#0c0f0c]">
               <div>
                 {/* Top Pill Badge */}
-                <span className="px-3 py-1 rounded-full bg-[#1c221c] border border-[#D6A85C]/35 text-[#D6A85C] text-[9.5px] font-sans tracking-widest uppercase font-semibold inline-block mb-3 sm:mb-3.5 shadow-sm">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#1c221c] border border-[#D6A85C]/35 text-[#D6A85C] text-[9px] font-sans tracking-widest uppercase font-semibold inline-block mb-2 shadow-sm">
                   EXPEDITION MENTOR
                 </span>
 
                 {/* Scaled Headline */}
-                <h3 className="font-serif text-2xl sm:text-3xl md:text-[2rem] text-[#F2F0E8] font-light leading-snug mb-3">
+                <h3 className="font-serif text-xl sm:text-2xl lg:text-[1.65rem] text-[#F2F0E8] font-light leading-snug mb-2">
                   Explore the wild with{' '}
                   <span className="text-[#D6A85C] font-normal block sm:inline">
                     {founder.displayName || founder.name}
@@ -114,16 +114,16 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
                 </h3>
 
                 {/* Simplified Bio Description */}
-                <p className="font-sans text-xs sm:text-[13px] text-[#A7A59B] leading-relaxed font-light mb-4 sm:mb-5">
+                <p className="font-sans text-xs sm:text-[12.5px] text-[#A7A59B] leading-relaxed font-light mb-3 line-clamp-3">
                   {founder.bio}
                 </p>
 
                 {/* Badges / Tags */}
-                <div className="flex flex-wrap gap-2 mb-5 sm:mb-6">
+                <div className="flex flex-wrap gap-1.5 mb-3">
                   {founder.tags && founder.tags.map((tag, i) => (
                     <span
                       key={i}
-                      className="px-3 py-1 rounded-full bg-[#181d18] border border-[#242923] text-[11px] font-sans text-[#E0DED5] font-medium shadow-sm"
+                      className="px-2.5 py-0.5 rounded-full bg-[#181d18] border border-[#242923] text-[10px] sm:text-[10.5px] font-sans text-[#E0DED5] font-medium shadow-sm"
                     >
                       {tag}
                     </span>
@@ -133,10 +133,10 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
 
               {/* Action Buttons & Bottom Links */}
               <div>
-                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pb-4 sm:pb-5 border-b border-[#202620]">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 pb-3 border-b border-[#202620]">
                   <button
                     onClick={onPlanTrip}
-                    className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] font-sans text-[11px] sm:text-xs uppercase tracking-wider font-bold shadow-md hover:shadow-[0_4px_20px_rgba(214,168,92,0.4)] hover:scale-102 active:scale-98 transition-all cursor-pointer flex items-center gap-2"
+                    className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] font-sans text-[10.5px] sm:text-xs uppercase tracking-wider font-bold shadow-md hover:shadow-[0_4px_20px_rgba(214,168,92,0.4)] hover:scale-102 active:scale-98 transition-all cursor-pointer flex items-center gap-1.5"
                   >
                     <span>Talk to Expert</span>
                     <span>→</span>
@@ -144,14 +144,14 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
 
                   <button
                     onClick={onExploreTrips}
-                    className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-[#151915] border border-[#242923] hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#D6A85C] font-sans text-[11px] sm:text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer"
+                    className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-[#151915] border border-[#242923] hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#D6A85C] font-sans text-[10.5px] sm:text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer"
                   >
                     <span>Explore Trips</span>
                   </button>
                 </div>
 
                 {/* Footer Metadata & Social Links */}
-                <div className="pt-3 sm:pt-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
+                <div className="pt-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                   <div className="flex items-center gap-2 flex-wrap">
                     {/* Instagram Link */}
                     {founder.instagram && (
@@ -159,7 +159,7 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
                         href={founder.instagram}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#161a16] border border-[#242923] hover:border-[#E1306C] text-[#F2F0E8] hover:text-[#E1306C] text-[11px] font-sans transition-all group"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#161a16] border border-[#242923] hover:border-[#E1306C] text-[#F2F0E8] hover:text-[#E1306C] text-[10.5px] font-sans transition-all group"
                         title="Follow on Instagram"
                       >
                         <svg className="w-3 h-3 text-[#E1306C]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -177,7 +177,7 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
                       href={`https://wa.me/919087394546?text=Hi%20${encodeURIComponent(founder.displayName || founder.name)},%20I'm%20reaching%20out%20to%20connect%20with%20you%20from%20VM%20Wild%20Expeditions.`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#161a16] border border-[#242923] hover:border-[#25D366] text-[#F2F0E8] hover:text-[#25D366] text-[11px] font-sans transition-all group"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#161a16] border border-[#242923] hover:border-[#25D366] text-[#F2F0E8] hover:text-[#25D366] text-[10.5px] font-sans transition-all group"
                       title="Chat on WhatsApp"
                     >
                       <svg className="w-3 h-3 text-[#25D366] fill-current" viewBox="0 0 24 24">
@@ -191,7 +191,7 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
                   {onViewFullAbout && (
                     <button
                       onClick={onViewFullAbout}
-                      className="text-[11px] font-sans text-[#A7A59B] hover:text-[#D6A85C] transition-colors cursor-pointer text-left sm:text-right"
+                      className="text-[10.5px] font-sans text-[#A7A59B] hover:text-[#D6A85C] transition-colors cursor-pointer text-left sm:text-right"
                     >
                       Read Full Story →
                     </button>
@@ -205,7 +205,7 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
           <button
             onClick={handlePrev}
             aria-label="Previous leader"
-            className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#111511] hover:bg-[#181d18] border border-[#242923] hover:border-[#D6A85C] text-[#F2F0E8] flex items-center justify-center text-base sm:text-lg transition-all duration-300 shadow-2xl backdrop-blur-md cursor-pointer active:scale-95"
+            className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#111511] hover:bg-[#181d18] border border-[#242923] hover:border-[#D6A85C] text-[#F2F0E8] flex items-center justify-center text-sm sm:text-base transition-all duration-300 shadow-2xl backdrop-blur-md cursor-pointer active:scale-95"
           >
             ‹
           </button>
@@ -214,14 +214,14 @@ export default function FoundersSection({ founders, onViewFullAbout, onPlanTrip,
           <button
             onClick={handleNext}
             aria-label="Next leader"
-            className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#111511] hover:bg-[#181d18] border border-[#242923] hover:border-[#D6A85C] text-[#F2F0E8] flex items-center justify-center text-base sm:text-lg transition-all duration-300 shadow-2xl backdrop-blur-md cursor-pointer active:scale-95"
+            className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-30 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#111511] hover:bg-[#181d18] border border-[#242923] hover:border-[#D6A85C] text-[#F2F0E8] flex items-center justify-center text-sm sm:text-base transition-all duration-300 shadow-2xl backdrop-blur-md cursor-pointer active:scale-95"
           >
             ›
           </button>
         </div>
 
         {/* Carousel Pagination Dots */}
-        <div className="flex items-center justify-center gap-2 mt-6">
+        <div className="flex items-center justify-center gap-2 mt-4">
           {founderList.map((f, i) => (
             <button
               key={f.id}

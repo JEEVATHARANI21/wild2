@@ -452,34 +452,34 @@ export default function HeroVideo({
         )}
       </div>
 
-      {/* MINIMAL HERO CONTENT ON THE RIGHT SIDE: HIGH-CONTRAST FROSTED CARD */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-24 pb-16 flex items-center justify-end pointer-events-none">
-        <div className="max-w-sm sm:max-w-md text-left pointer-events-auto bg-[#080a08]/85 backdrop-blur-xl p-6 sm:p-7 rounded-2xl border border-[#D6A85C]/35 shadow-[0_20px_60px_rgba(0,0,0,0.85)]">
+      {/* MINIMAL HERO CONTENT: DOCKED AT BOTTOM ON MOBILE, RIGHT-ALIGNED ON DESKTOP */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-10 lg:px-16 pt-20 pb-20 md:py-24 flex flex-col justify-end md:justify-center items-center md:items-end pointer-events-none h-full">
+        <div className="w-full max-w-sm sm:max-w-md text-left pointer-events-auto bg-[#080a08]/90 md:bg-[#080a08]/85 backdrop-blur-xl p-4 sm:p-6 md:p-7 rounded-2xl border border-[#D6A85C]/35 shadow-[0_20px_60px_rgba(0,0,0,0.85)] mb-3 md:mb-0">
           {/* Eyebrow Badge */}
           {eyebrow && (
-            <div className="inline-flex items-center gap-2 text-[10px] sm:text-[10.5px] uppercase tracking-[0.22em] text-[#D6A85C] font-semibold py-1 px-3 rounded-full border border-[#D6A85C]/40 bg-[#121612]/90 backdrop-blur-md shadow-sm mb-3">
+            <div className="inline-flex items-center gap-2 text-[9px] sm:text-[10.5px] uppercase tracking-[0.2em] text-[#D6A85C] font-semibold py-0.5 px-2.5 sm:py-1 sm:px-3 rounded-full border border-[#D6A85C]/40 bg-[#121612]/90 backdrop-blur-md shadow-sm mb-2 sm:mb-2.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#D6A85C]" />
               <span>{eyebrow}</span>
             </div>
           )}
 
           {/* Main Headline */}
-          <h1 className="font-serif text-2xl sm:text-3xl lg:text-[2.1rem] font-light leading-[1.15] tracking-tight text-[#FFFFFF] drop-shadow-md mb-2.5">
+          <h1 className="font-serif text-lg sm:text-2xl md:text-3xl lg:text-[2.1rem] font-light leading-[1.15] tracking-tight text-[#FFFFFF] drop-shadow-md mb-2 sm:mb-2.5">
             <span>Bespoke Photographic </span>
             <span className="text-[#E5B560] italic font-normal block sm:inline">
               Expeditions
             </span>
           </h1>
 
-          {/* Minimal Supporting Description */}
+          {/* Minimal Supporting Description: Hidden on small mobile screens to keep the tiger 100% visible */}
           {description && (
-            <p className="text-xs sm:text-[13px] text-[#E8E6DE] font-normal leading-relaxed font-sans drop-shadow-sm mb-5">
+            <p className="hidden sm:block text-xs sm:text-[13px] text-[#E8E6DE] font-normal leading-relaxed font-sans drop-shadow-sm mb-4 sm:mb-5">
               {description}
             </p>
           )}
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3 mt-1 sm:mt-0">
             <button
               type="button"
               onClick={() => {
@@ -489,7 +489,7 @@ export default function HeroVideo({
                 hasCompletedOnceRef.current = true;
                 onPrimaryCtaClick && onPrimaryCtaClick();
               }}
-              className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-[10.5px] uppercase tracking-[0.16em] font-bold hover:brightness-110 hover:shadow-[0_6px_20px_rgba(214,168,92,0.4)] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg whitespace-nowrap"
+              className="flex-1 sm:flex-initial px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-[10px] sm:text-[10.5px] uppercase tracking-[0.16em] font-bold hover:brightness-110 hover:shadow-[0_6px_20px_rgba(214,168,92,0.4)] transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer shadow-lg whitespace-nowrap"
             >
               <span>{primaryCtaText}</span>
               <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
@@ -503,7 +503,7 @@ export default function HeroVideo({
                 isCompletedRef.current = true;
                 hasCompletedOnceRef.current = true;
               }}
-              className="px-5 py-2.5 rounded-full border border-white/25 hover:border-[#D6A85C] bg-[#161a16]/80 hover:bg-[#D6A85C]/20 backdrop-blur-md text-[#F2F0E8] hover:text-[#D6A85C] text-[10.5px] uppercase tracking-[0.16em] font-medium transition-all duration-300 text-center cursor-pointer whitespace-nowrap"
+              className="flex-1 sm:flex-initial px-4 py-2 sm:px-5 sm:py-2.5 rounded-full border border-white/25 hover:border-[#D6A85C] bg-[#161a16]/80 hover:bg-[#D6A85C]/20 backdrop-blur-md text-[#F2F0E8] hover:text-[#D6A85C] text-[10px] sm:text-[10.5px] uppercase tracking-[0.16em] font-medium transition-all duration-300 text-center cursor-pointer whitespace-nowrap"
             >
               {secondaryCtaText}
             </a>
@@ -511,10 +511,10 @@ export default function HeroVideo({
         </div>
       </div>
 
-      {/* BOTTOM STATUS BAR: Live Playback Progress & Scroll Indicator */}
-      <div className="absolute bottom-6 left-6 right-6 sm:left-10 sm:right-10 md:left-16 md:right-16 z-20 flex items-center justify-between text-xs uppercase tracking-[0.2em] pointer-events-auto">
+      {/* BOTTOM STATUS BAR: Live Playback Progress & Scroll Indicator (right-20 avoids WhatsApp collision on mobile) */}
+      <div className="absolute bottom-4 left-4 right-20 sm:left-10 sm:right-10 md:left-16 md:right-16 z-20 flex items-center justify-between text-xs uppercase tracking-[0.2em] pointer-events-auto">
         {/* Live Playback Status Badge */}
-        <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/15 backdrop-blur-md shadow-md">
+        <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/15 backdrop-blur-md shadow-md">
           <span
             className={`w-2 h-2 rounded-full ${
               isCompleted
@@ -541,20 +541,20 @@ export default function HeroVideo({
         <button
           type="button"
           onClick={scrollToFounders}
-          className={`inline-flex items-center gap-2 text-[10.5px] sm:text-xs transition-all ml-auto group/scroll backdrop-blur-md px-4 py-2 rounded-full shadow-lg cursor-pointer ${
+          className={`inline-flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs transition-all ml-auto group/scroll backdrop-blur-md px-3.5 py-2 sm:px-4 sm:py-2 rounded-full shadow-lg cursor-pointer ${
             isCompleted
               ? "bg-[#D6A85C] text-[#080908] font-bold border border-[#D6A85C] hover:bg-[#B87333]"
-              : "bg-black/60 text-[#D6A85C] border border-white/15 hover:border-[#D6A85C]"
+              : "bg-black/75 text-[#D6A85C] border border-white/15 hover:border-[#D6A85C]"
           }`}
         >
-          <span className="tracking-[0.18em]">
+          <span className="tracking-[0.15em] sm:tracking-[0.18em]">
             {isCompleted
-              ? "CONTINUE TO 2ND SECTION (FOUNDERS) ↓"
+              ? "CONTINUE ↓"
               : isPlaying
-              ? `SCROLLING TO PLAY (${progressPercent}%) ↓`
+              ? `PLAYING (${progressPercent}%) ↓`
               : hasStarted
-              ? `RESUME ON SCROLL (${progressPercent}%) ↓`
-              : "SCROLL TO PLAY VIDEO ↓"}
+              ? `RESUME (${progressPercent}%) ↓`
+              : "SCROLL TO PLAY ↓"}
           </span>
           <ChevronDown
             className={`w-3.5 h-3.5 ${

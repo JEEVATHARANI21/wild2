@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import { ArrowRight, ChevronDown, Lock, Unlock, Play, Pause } from "lucide-react";
+import { useRef, useEffect, useState, useCallback } from "react";
+import { ArrowRight, ChevronDown, Volume2, VolumeX, Play, Pause, RotateCcw } from "lucide-react";
 
 interface HeroVideoProps {
   src?: string;
@@ -27,94 +27,86 @@ export default function HeroVideo({
   const trackRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+  const [progress, setProgress] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
 
   // Split title lines
   const titleLines = title.split("\n");
   const line1 = titleLines[0] || title;
   const line2 = titleLines[1] || "";
 
-  // 1. Prime video on mount so first frame is decoded & ready
+  // 1. Autoplay video smoothly at 1x natural speed on mount
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     video.muted = true;
     video.playsInline = true;
+    video.playbackRate = 1.0;
 
-    const primeVideo = () => {
-      if (video.readyState >= 2 && video.currentTime === 0) {
-        video.currentTime = 0.01;
+    const tryPlay = () => {
+      video
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => {
+          // Fallback for strict browser autoplay policies
+          video.muted = true;
+          video.play().then(() => setIsPlaying(true)).catch(() => {});
+        });
+    };
+
+    if (video.readyState >= 2) {
+      tryPlay();
+    } else {
+      video.addEventListener("canplay", tryPlay, { once: true });
+    }
+
+    const onTimeUpdate = () => {
+      if (!video || !video.duration || isNaN(video.duration)) return;
+      const current = Math.min(video.currentTime / video.duration, 1);
+      setProgress(current);
+      if (current >= 0.95) {
+        setIsCompleted(true);
       }
     };
 
-    video.addEventListener("loadedmetadata", primeVideo);
-    video.addEventListener("loadeddata", primeVideo);
-    video.load();
-    if (video.readyState >= 2) primeVideo();
+    const onEnded = () => {
+      setIsCompleted(true);
+      // Seamlessly loop video to keep royal tiger scene alive
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    };
+
+    video.addEventListener("timeupdate", onTimeUpdate);
+    video.addEventListener("ended", onEnded);
 
     return () => {
-      video.removeEventListener("loadedmetadata", primeVideo);
-      video.removeEventListener("loadeddata", primeVideo);
+      video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("timeupdate", onTimeUpdate);
+      video.removeEventListener("ended", onEnded);
     };
   }, [src]);
 
-  // 2. Master Sticky Scroll-Scrub Engine:
-  // Hero stays sticky on screen, playing the video until 100% complete,
-  // then seamlessly allows normal scrolling into the 2nd section (Founders).
+  // 2. Responsive Sticky Pinning & Scroll Progression:
+  // Pins the hero while playing the video through a snappy 135vh track,
+  // then smoothly allows the page to scroll directly into the 2nd section (#founders).
   useEffect(() => {
-    const video = videoRef.current;
     const track = trackRef.current;
-    if (!video || !track) return;
-
-    let rafId: number | null = null;
-    let targetProgress = 0;
-    let currentProgress = 0;
-    let isTicking = false;
+    if (!track) return;
 
     const handleScroll = () => {
-      if (!track) return;
       const rect = track.getBoundingClientRect();
       const maxScrollDistance = rect.height - window.innerHeight;
       if (maxScrollDistance <= 0) return;
 
       const scrolled = -rect.top;
-      targetProgress = Math.min(Math.max(scrolled / maxScrollDistance, 0), 1);
+      const scrollRatio = Math.min(Math.max(scrolled / maxScrollDistance, 0), 1);
 
-      if (!isTicking) {
-        isTicking = true;
-        rafId = requestAnimationFrame(updateTimeline);
-      }
-    };
-
-    const updateTimeline = () => {
-      const diff = targetProgress - currentProgress;
-      if (Math.abs(diff) < 0.0005) {
-        currentProgress = targetProgress;
-      } else {
-        currentProgress += diff * 0.24; // Ultra smooth lerp damping
-      }
-
-      // Scrub video time in direct sync with scroll progress
-      if (!isAutoPlaying && video.duration && !isNaN(video.duration) && video.duration > 0) {
-        const targetTime = Math.min(
-          Math.max(currentProgress * video.duration, 0.01),
-          video.duration - 0.02
-        );
-        if (!video.seeking && Math.abs(video.currentTime - targetTime) > 0.025) {
-          video.currentTime = targetTime;
-        }
-      }
-
-      setScrollProgress(currentProgress);
-      setIsCompleted(currentProgress >= 0.94);
-
-      if (Math.abs(targetProgress - currentProgress) > 0.0005) {
-        rafId = requestAnimationFrame(updateTimeline);
-      } else {
-        isTicking = false;
+      // Once the user scrolls near the end of the sticky track, unlock for 2nd section
+      if (scrollRatio >= 0.9) {
+        setIsCompleted(true);
       }
     };
 
@@ -123,127 +115,137 @@ export default function HeroVideo({
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [isAutoPlaying]);
+  }, []);
 
-  // Toggle optional continuous auto-play
-  const toggleAutoPlay = () => {
+  // Controls
+  const togglePlay = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    if (isAutoPlaying) {
-      video.pause();
-      setIsAutoPlaying(false);
-    } else {
+    if (video.paused) {
       video
         .play()
-        .then(() => setIsAutoPlaying(true))
+        .then(() => setIsPlaying(true))
         .catch(() => {});
+    } else {
+      video.pause();
+      setIsPlaying(false);
     }
-  };
+  }, []);
 
-  const progressPercent = Math.round(scrollProgress * 100);
+  const toggleMute = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+  }, []);
+
+  const replayVideo = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.currentTime = 0;
+    video
+      .play()
+      .then(() => {
+        setIsPlaying(true);
+        setIsCompleted(false);
+      })
+      .catch(() => {});
+  }, []);
+
+  const progressPercent = Math.round(progress * 100);
 
   return (
     <section
       ref={trackRef}
-      className="hero-scroll-track relative w-full bg-[#080909]"
-      style={{ height: "260vh" }}
+      className="hero-scroll-track relative w-full bg-[#060806]"
+      style={{ height: "135vh" }}
     >
       {/* 
-        STICKY INNER CONTAINER: 
-        Pins the hero card to the viewport top while the user scrolls through the 260vh track.
-        Once the video completes (end of track), scrolling naturally continues into the 2nd section (#founders).
+        STICKY HERO VIEWPORT:
+        Full-screen edge-to-edge video presentation with clean left-aligned typography.
+        Once the video completes or user scrolls past the 135vh track,
+        scrolling naturally flows into the 2nd section (#founders).
       */}
-      <div className="sticky top-0 w-full h-screen overflow-hidden flex flex-col items-center justify-center p-3 pt-20 sm:p-5 sm:pt-24 md:p-8 md:pt-24 lg:p-10 lg:pt-24 z-10 select-none">
-        {/* HERO CARD CONTAINER */}
-        <div className="relative w-full max-w-[1520px] h-[82vh] md:h-[86vh] rounded-2xl md:rounded-[32px] overflow-hidden border border-white/15 bg-[#0b0e0b] shadow-[0_25px_60px_rgba(0,0,0,0.85)] flex flex-col justify-between group">
-          {/* Background Full HD Royal Bengal Tiger Video */}
-          <div className="absolute inset-0 z-0 overflow-hidden">
-            <video
-              ref={videoRef}
-              muted
-              playsInline
-              preload="auto"
-              poster={poster}
-              className="w-full h-full object-cover object-[center_35%] brightness-[0.88] contrast-[1.05]"
-            >
-              <source src="/videos/home-hero.mp4" type="video/mp4" />
-              <source src="/videos/IMG_8206.MOV" type="video/quicktime" />
-              <img
-                src={poster}
-                alt="Wild Bengal Tiger — VM Wild Expeditions"
-                className="w-full h-full object-cover object-[center_35%]"
-              />
-            </video>
+      <div className="sticky top-0 w-full h-screen overflow-hidden select-none bg-[#060806] flex items-center">
+        {/* FULLSCREEN ROYAL BENGAL TIGER VIDEO BACKGROUND */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <video
+            ref={videoRef}
+            muted={isMuted}
+            playsInline
+            autoPlay
+            preload="auto"
+            poster={poster}
+            className="w-full h-full object-cover object-[center_35%] md:object-[62%_35%] brightness-[0.96] contrast-[1.04]"
+          >
+            <source src="/videos/home-hero.mp4" type="video/mp4" />
+            <source src="/videos/IMG_8206.MOV" type="video/quicktime" />
+            <img
+              src={poster}
+              alt="Wild Bengal Tiger — VM Wild Expeditions"
+              className="w-full h-full object-cover object-[center_35%] md:object-[62%_35%]"
+            />
+          </video>
 
-            {/* CINEMATIC CONTRAST GRADIENTS */}
-            {/* Mobile dark vignette */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#080909] via-[#080909]/80 to-[#080909]/50 sm:hidden pointer-events-none" />
+          {/* CINEMATIC CONTRAST GRADIENTS: Left vignette ensures crisp text legibility while keeping the tiger completely bright */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#060806]/90 via-[#060806]/55 via-35% md:via-[#060806]/40 to-transparent pointer-events-none" />
 
-            {/* Desktop negative space contrast */}
-            <div className="hidden sm:block absolute inset-0 bg-gradient-to-r from-[#080909]/95 via-[#080909]/75 md:via-[#080909]/50 to-transparent pointer-events-none" />
+          {/* Top & Bottom blends for seamless navbar integration */}
+          <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-[#060806]/85 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#060806] to-transparent pointer-events-none" />
+        </div>
 
-            {/* Top & Bottom blends */}
-            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#080909]/90 to-transparent pointer-events-none" />
-            <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-[#080909] to-transparent pointer-events-none" />
-          </div>
+        {/* TOP-RIGHT CONTROLS: Play/Pause, Sound Toggle & Video Replay */}
+        <div className="absolute top-20 sm:top-24 right-5 sm:right-10 md:right-14 z-20 flex items-center gap-2 pointer-events-auto">
+          {/* Play / Pause Toggle */}
+          <button
+            type="button"
+            onClick={togglePlay}
+            aria-label={isPlaying ? "Pause Video" : "Play Video"}
+            className="w-9 h-9 rounded-full bg-black/60 hover:bg-[#D6A85C] border border-white/20 hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#080908] flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-lg"
+            title={isPlaying ? "Pause Video" : "Play Video"}
+          >
+            {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
+          </button>
 
-          {/* TOP BAR: Eyebrow + Live Scrub Progress Indicator + AutoPlay Button */}
-          <div className="relative z-10 p-5 sm:p-8 md:p-10 flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
+          {/* Sound Toggle */}
+          <button
+            type="button"
+            onClick={toggleMute}
+            aria-label={isMuted ? "Unmute Audio" : "Mute Audio"}
+            className="w-9 h-9 rounded-full bg-black/60 hover:bg-[#D6A85C] border border-white/20 hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#080908] flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-lg"
+            title={isMuted ? "Unmute Audio" : "Mute Audio"}
+          >
+            {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+          </button>
+
+          {/* Replay Button */}
+          <button
+            type="button"
+            onClick={replayVideo}
+            aria-label="Replay Video"
+            className="w-9 h-9 rounded-full bg-black/60 hover:bg-[#D6A85C] border border-white/20 hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#080908] flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-lg"
+            title="Replay Video"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* HERO CONTENT: Left-Aligned Column That Doesn't Obscure the Tiger */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-20 sm:pt-24 pb-14 flex flex-col justify-center pointer-events-none">
+          <div className="max-w-xl text-left pointer-events-auto">
             {/* Eyebrow Badge */}
-            <span className="inline-flex items-center gap-2 text-[10px] md:text-xs uppercase tracking-[0.28em] text-[#D6A85C] font-semibold py-1.5 px-3.5 sm:px-4 rounded-full border border-[#D6A85C]/35 bg-black/60 backdrop-blur-md shadow-md">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#D6A85C]" />
+            <div className="inline-flex items-center gap-2 text-[10px] sm:text-xs uppercase tracking-[0.24em] text-[#D6A85C] font-semibold py-1.5 px-3.5 rounded-full border border-[#D6A85C]/40 bg-[#080a08]/85 backdrop-blur-md shadow-md mb-3 sm:mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#D6A85C] animate-pulse" />
               <span>{eyebrow}</span>
-            </span>
-
-            {/* Live Sticky Scroll Status + AutoPlay Option */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Optional AutoPlay Button */}
-              <button
-                type="button"
-                onClick={toggleAutoPlay}
-                aria-label={isAutoPlaying ? "Pause Video Autoplay" : "Enable Video Autoplay"}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 border border-white/20 hover:border-[#D6A85C] text-[10px] md:text-xs font-sans tracking-[0.16em] uppercase text-[#F2F0E8] hover:text-[#D6A85C] backdrop-blur-md transition-all cursor-pointer shadow-md"
-              >
-                {isAutoPlaying ? (
-                  <>
-                    <Pause className="w-3 h-3 text-[#D6A85C]" />
-                    <span className="font-semibold">PAUSE</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-3 h-3 text-[#D6A85C]" />
-                    <span className="font-semibold">AUTO PLAY</span>
-                  </>
-                )}
-              </button>
-
-              {/* Sticky Scroll Progress Lock Indicator */}
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/75 border border-white/20 backdrop-blur-md text-[10px] md:text-xs uppercase tracking-[0.18em] shadow-md">
-                {isCompleted ? (
-                  <>
-                    <Unlock className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="font-bold text-emerald-400">
-                      VIDEO COMPLETE • SCROLL FOR 2ND PAGE ↓
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <Lock className="w-3.5 h-3.5 text-[#D6A85C]" />
-                    <span className="font-semibold text-[#F2F0E8]">
-                      SCROLL TO PLAY ({progressPercent}%)
-                    </span>
-                  </>
-                )}
-              </div>
             </div>
-          </div>
 
-          {/* MAIN CONTENT: Headline, Description & CTAs */}
-          <div className="relative z-10 p-5 sm:p-8 md:p-10 max-w-3xl space-y-4 md:space-y-6 pointer-events-auto my-auto">
-            <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-normal leading-[1.06] tracking-tight text-[#F2F0E8] drop-shadow-2xl">
+            {/* Main Headline */}
+            <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-[4.2rem] font-light leading-[1.06] tracking-tight text-[#F2F0E8] drop-shadow-2xl mb-3 sm:mb-5">
               <span className="block">{line1}</span>
               {line2 && (
                 <span className="block text-[#D6A85C] font-normal italic mt-1">
@@ -252,16 +254,17 @@ export default function HeroVideo({
               )}
             </h1>
 
-            <p className="text-xs sm:text-base md:text-lg text-[#F2F0E8]/90 font-light max-w-xl leading-relaxed font-sans drop-shadow-md">
+            {/* Supporting Description */}
+            <p className="text-xs sm:text-sm md:text-base text-[#F2F0E8]/90 font-light leading-relaxed max-w-lg font-sans drop-shadow-md mb-6 sm:mb-8">
               {description}
             </p>
 
-            {/* CTAs */}
-            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-5 w-full sm:w-auto">
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={onPrimaryCtaClick}
-                className="px-8 py-4 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-xs uppercase tracking-[0.2em] font-bold hover:brightness-110 hover:shadow-[0_6px_30px_rgba(214,168,92,0.45)] hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer shadow-xl whitespace-nowrap"
+                className="px-7 py-3.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-xs uppercase tracking-[0.18em] font-bold hover:brightness-110 hover:shadow-[0_6px_25px_rgba(214,168,92,0.4)] transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer shadow-lg whitespace-nowrap"
               >
                 <span>{primaryCtaText}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -269,54 +272,62 @@ export default function HeroVideo({
 
               <a
                 href="#destinations"
-                className="px-8 py-4 rounded-full border border-white/30 hover:border-[#D6A85C] bg-black/50 hover:bg-[#D6A85C]/15 backdrop-blur-md text-[#F2F0E8] hover:text-[#D6A85C] text-xs uppercase tracking-[0.2em] font-medium transition-all duration-300 text-center cursor-pointer whitespace-nowrap"
+                className="px-7 py-3.5 rounded-full border border-white/25 hover:border-[#D6A85C] bg-black/40 hover:bg-[#D6A85C]/15 backdrop-blur-md text-[#F2F0E8] hover:text-[#D6A85C] text-xs uppercase tracking-[0.18em] font-medium transition-all duration-300 text-center cursor-pointer whitespace-nowrap"
               >
                 {secondaryCtaText}
               </a>
             </div>
 
             {/* Core Trust Pillars */}
-            <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-2 pt-3 text-[10px] sm:text-xs font-sans tracking-[0.14em] sm:tracking-[0.16em] uppercase text-[#F2F0E8]/80 font-medium border-t border-[#242923]/80">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="text-sm">📍</span>
+            <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-2 text-[10px] sm:text-xs font-sans tracking-[0.14em] uppercase text-[#F2F0E8]/80 font-medium pt-3.5 border-t border-white/10 max-w-lg">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#D6A85C]">📍</span>
                 <span>India's Premier Wilds</span>
               </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="text-sm">📷</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#D6A85C]">📷</span>
                 <span>Field Masterclasses</span>
               </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="text-sm">👥</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#D6A85C]">👥</span>
                 <span>Max 4 / Gypsy</span>
               </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="text-sm">🌿</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#D6A85C]">🌿</span>
                 <span>Ethical Tracking</span>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* BOTTOM BAR: Tiger Habitat Status & Link into 2nd Section (#founders) */}
-          <div className="relative z-10 p-4 sm:p-6 md:p-8 flex items-center justify-between text-xs tracking-[0.25em] text-[#F2F0E8]/75 uppercase pointer-events-auto border-t border-white/10 bg-black/30 backdrop-blur-sm">
-            <div className="hidden sm:flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#D6A85C] animate-pulse" />
-              <span className="font-semibold text-[10.5px] text-[#D6A85C]">
-                {isCompleted ? "HABITAT REVEALED • 100% COMPLETE" : "ROYAL BENGAL TIGER • LIVE HABITAT"}
-              </span>
-            </div>
-
-            <a
-              href="#founders"
-              className="inline-flex items-center gap-2 text-[10.5px] sm:text-xs text-[#D6A85C] hover:text-[#F2F0E8] transition-colors ml-auto group/scroll"
-            >
-              <span className="tracking-[0.2em]">
-                {isCompleted ? "SCROLL FOR 2ND SECTION (FOUNDERS) ↓" : "SCROLLING PLAYS VIDEO ↓"}
-              </span>
-              <div className="w-6 h-6 rounded-full border border-[#D6A85C]/40 flex items-center justify-center group-hover/scroll:border-[#D6A85C]">
-                <ChevronDown className="w-3.5 h-3.5 text-[#D6A85C] animate-bounce" />
-              </div>
-            </a>
+        {/* BOTTOM STATUS BAR: Live Progress + Scroll to 2nd Section (#founders) */}
+        <div className="absolute bottom-6 left-6 right-6 sm:left-10 sm:right-10 md:left-16 md:right-16 z-20 flex items-center justify-between text-xs uppercase tracking-[0.2em] pointer-events-auto">
+          {/* Live Video Habitat Status Indicator */}
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 border border-white/15 backdrop-blur-md shadow-md">
+            <span className="w-2 h-2 rounded-full bg-[#D6A85C] animate-pulse" />
+            <span className="text-[10px] text-[#D6A85C] font-semibold tracking-[0.2em]">
+              {isCompleted ? "HABITAT REVEALED • 100% COMPLETE" : `ROYAL BENGAL TIGER • ${progressPercent}%`}
+            </span>
           </div>
+
+          {/* Scroll Prompt to 2nd Section (#founders) */}
+          <a
+            href="#founders"
+            className="inline-flex items-center gap-2 text-[10.5px] sm:text-xs text-[#D6A85C] hover:text-[#F2F0E8] transition-colors ml-auto group/scroll bg-black/60 border border-white/15 hover:border-[#D6A85C] backdrop-blur-md px-4 py-2 rounded-full shadow-lg"
+          >
+            <span className="tracking-[0.18em]">
+              {isCompleted ? "SCROLL FOR 2ND SECTION (FOUNDERS) ↓" : "SCROLL TO EXPLORE ↓"}
+            </span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#D6A85C] animate-bounce" />
+          </a>
+        </div>
+
+        {/* THIN GOLD PROGRESS TIMELINE AT VERY BOTTOM */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 z-20">
+          <div
+            className="h-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] transition-all duration-150"
+            style={{ width: `${progressPercent}%` }}
+          />
         </div>
       </div>
     </section>

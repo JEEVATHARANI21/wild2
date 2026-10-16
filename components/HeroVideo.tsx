@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState, useCallback } from "react";
-import { ArrowRight, ChevronDown, Volume2, VolumeX, MousePointer, RotateCcw } from "lucide-react";
+import { ChevronDown, Volume2, VolumeX, MousePointer, RotateCcw } from "lucide-react";
 
 interface HeroVideoProps {
   src?: string;
@@ -403,6 +403,9 @@ export default function HeroVideo({
           />
         </video>
 
+        {/* Subtle Right-Side Gradient: provides soft contrast for right-side text without darkening the tiger on the left/center */}
+        <div className="absolute inset-y-0 right-0 w-full sm:w-2/3 md:w-1/2 bg-gradient-to-l from-[#060806]/80 via-[#060806]/40 to-transparent pointer-events-none" />
+
         {/* Top & Bottom blends for seamless navbar and section integration */}
         <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-[#060806]/85 to-transparent pointer-events-none" />
         <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#060806] to-transparent pointer-events-none" />
@@ -449,44 +452,34 @@ export default function HeroVideo({
         )}
       </div>
 
-      {/* MINIMAL LEFT-SIDE HERO CONTENT */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 flex items-center pointer-events-none">
-        <div className="max-w-xs sm:max-w-sm text-left pointer-events-auto bg-black/40 backdrop-blur-md p-5 sm:p-6 rounded-2xl border border-white/10 shadow-2xl">
-          {/* Subtle Eyebrow */}
-          <div className="inline-flex items-center gap-2 text-[9.5px] sm:text-[10px] uppercase tracking-[0.24em] text-[#D6A85C] font-semibold mb-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D6A85C]" />
-            <span>THE PINNACLE OF WILDLIFE</span>
-          </div>
+      {/* MINIMAL HERO CONTENT ON THE RIGHT SIDE */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-24 pb-16 flex items-center justify-end pointer-events-none">
+        <div className="max-w-sm sm:max-w-md text-left pointer-events-auto bg-[#080908]/40 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none p-5 sm:p-6 md:p-0 rounded-2xl md:border-none shadow-xl md:shadow-none">
+          {/* Eyebrow Badge */}
+          {eyebrow && (
+            <div className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-[#D6A85C] font-semibold py-1 px-3 rounded-full border border-[#D6A85C]/40 bg-[#080a08]/85 backdrop-blur-md shadow-md mb-2.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#D6A85C]" />
+              <span>{eyebrow}</span>
+            </div>
+          )}
 
-          {/* Minimal Headline */}
-          <h1 className="font-serif text-2xl sm:text-3xl font-light text-[#F2F0E8] leading-tight mb-2 drop-shadow-md">
-            <span>Bespoke Photographic</span>{" "}
-            <span className="text-[#D6A85C] italic font-normal">Expeditions</span>
+          {/* Main Headline */}
+          <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-light leading-[1.12] tracking-tight text-[#F2F0E8] drop-shadow-2xl mb-2.5">
+            <span>Bespoke Photographic </span>
+            <span className="text-[#D6A85C] italic font-normal block sm:inline">
+              Expeditions
+            </span>
           </h1>
 
-          {/* 1-Line Minimal Essence */}
-          <p className="text-xs sm:text-[13px] text-[#F2F0E8]/85 font-light leading-relaxed mb-4">
-            Masterclass field tracking & intimate safaris across India's premier tiger reserves.
-          </p>
+          {/* Minimal Supporting Description */}
+          {description && (
+            <p className="text-xs sm:text-sm text-[#F2F0E8]/85 font-light leading-relaxed max-w-sm sm:max-w-md font-sans drop-shadow-md mb-4 sm:mb-5">
+              {description}
+            </p>
+          )}
 
-          {/* Minimal Actions */}
+          {/* Action Buttons */}
           <div className="flex items-center gap-3">
-            <a
-              href="#tours"
-              onClick={() => {
-                setScrollLock(false);
-                setIsCompleted(true);
-                isCompletedRef.current = true;
-                hasCompletedOnceRef.current = true;
-                const el = document.getElementById("tours") || document.getElementById("packages") || document.getElementById("founders");
-                if (el) el.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-[10.5px] sm:text-xs uppercase tracking-[0.16em] font-bold hover:brightness-110 shadow-md transition-all inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
-            >
-              <span>{secondaryCtaText || "EXPLORE TOURS"}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </a>
-
             <button
               type="button"
               onClick={() => {
@@ -496,10 +489,24 @@ export default function HeroVideo({
                 hasCompletedOnceRef.current = true;
                 onPrimaryCtaClick && onPrimaryCtaClick();
               }}
-              className="text-[10.5px] sm:text-xs uppercase tracking-[0.16em] text-[#F2F0E8]/80 hover:text-[#D6A85C] transition-colors font-medium px-2 py-1 cursor-pointer whitespace-nowrap"
+              className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-[10.5px] uppercase tracking-[0.16em] font-bold hover:brightness-110 hover:shadow-[0_6px_20px_rgba(214,168,92,0.35)] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg whitespace-nowrap"
             >
-              {primaryCtaText || "ENQUIRE"}
+              <span>{primaryCtaText}</span>
+              <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
             </button>
+
+            <a
+              href="#founders"
+              onClick={() => {
+                setScrollLock(false);
+                setIsCompleted(true);
+                isCompletedRef.current = true;
+                hasCompletedOnceRef.current = true;
+              }}
+              className="px-5 py-2.5 rounded-full border border-white/20 hover:border-[#D6A85C] bg-black/40 hover:bg-[#D6A85C]/15 backdrop-blur-md text-[#F2F0E8] hover:text-[#D6A85C] text-[10.5px] uppercase tracking-[0.16em] font-medium transition-all duration-300 text-center cursor-pointer whitespace-nowrap"
+            >
+              {secondaryCtaText}
+            </a>
           </div>
         </div>
       </div>

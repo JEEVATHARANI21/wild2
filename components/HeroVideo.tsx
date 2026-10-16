@@ -76,7 +76,11 @@ export default function HeroVideo({
 
     const foundersEl = document.getElementById("founders");
     if (foundersEl) {
-      foundersEl.scrollIntoView({ behavior: "smooth" });
+      if (typeof window !== "undefined" && (window as any).__lenis) {
+        (window as any).__lenis.scrollTo(foundersEl, { duration: 1.1 });
+      } else {
+        foundersEl.scrollIntoView({ behavior: "smooth" });
+      }
     }
   }, [setScrollLock]);
 
@@ -164,7 +168,12 @@ export default function HeroVideo({
 
     // 3. Unlock scrolling after video completion
     setScrollLock(false);
-  }, [setScrollLock]);
+
+    // Move smoothly to the next page (Founders section)
+    setTimeout(() => {
+      scrollToFounders();
+    }, 350);
+  }, [setScrollLock, scrollToFounders]);
 
   // Helper: Scroll activity detection — play on scroll, pause when scrolling stops
   const handleScrollActivity = useCallback(() => {
@@ -378,7 +387,7 @@ export default function HeroVideo({
   return (
     <section
       ref={containerRef}
-      className="sticky top-0 w-full h-screen min-h-[620px] overflow-hidden select-none bg-[#060806] flex items-center z-10"
+      className="relative w-full h-screen min-h-[620px] overflow-hidden select-none bg-[#060806] flex items-center"
     >
       {/* FULLSCREEN ROYAL BENGAL TIGER VIDEO BACKGROUND */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">

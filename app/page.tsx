@@ -85,6 +85,9 @@ function MainApp() {
       touchMultiplier: 1.5,
     } as any);
     lenisRef.current = lenis;
+    if (typeof window !== "undefined") {
+      (window as any).__lenis = lenis;
+    }
 
     lenis.on("scroll", ScrollTrigger.update);
     const tickerCb = (time: number) => {
@@ -96,6 +99,9 @@ function MainApp() {
     return () => {
       lenis.destroy();
       gsap.ticker.remove(tickerCb);
+      if (typeof window !== "undefined") {
+        delete (window as any).__lenis;
+      }
     };
   }, []);
 

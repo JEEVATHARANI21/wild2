@@ -382,7 +382,7 @@ export default function HeroVideo({
   return (
     <section
       ref={containerRef}
-      className="relative w-full h-screen min-h-[620px] overflow-hidden select-none bg-[#060806] flex items-center"
+      className="relative w-full h-[100dvh] min-h-[100svh] overflow-hidden select-none bg-[#060806] flex flex-col justify-between"
     >
       {/* FULLSCREEN ROYAL BENGAL TIGER VIDEO BACKGROUND */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -404,15 +404,15 @@ export default function HeroVideo({
         </video>
 
         {/* Subtle Right-Side Gradient: provides soft contrast for right-side text without darkening the tiger on the left/center */}
-        <div className="absolute inset-y-0 right-0 w-full sm:w-2/3 md:w-1/2 bg-gradient-to-l from-[#060806]/80 via-[#060806]/40 to-transparent pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-full sm:w-2/3 md:w-1/2 bg-gradient-to-l from-[#060806]/85 via-[#060806]/40 to-transparent pointer-events-none" />
 
         {/* Top & Bottom blends for seamless navbar and section integration */}
-        <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-[#060806]/85 to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#060806] to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-24 sm:h-28 bg-gradient-to-b from-[#060806]/90 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 sm:h-28 bg-gradient-to-t from-[#060806] to-transparent pointer-events-none" />
       </div>
 
       {/* TOP-RIGHT CONTROLS: Scroll Status Guidance & Sound Toggle */}
-      <div className="absolute top-20 sm:top-24 right-5 sm:right-10 md:right-14 z-20 flex items-center gap-2.5 pointer-events-auto">
+      <div className="absolute top-18 sm:top-24 right-4 sm:right-10 md:right-14 z-20 flex items-center gap-2 sm:gap-2.5 pointer-events-auto">
         {/* Scroll Status Guidance Badge */}
         {!isCompleted && (
           <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-[#D6A85C]/40 backdrop-blur-md text-[10px] uppercase tracking-[0.2em] text-[#D6A85C] shadow-lg">
@@ -432,7 +432,7 @@ export default function HeroVideo({
           type="button"
           onClick={toggleMute}
           aria-label={isMuted ? "Unmute Audio" : "Mute Audio"}
-          className="w-9 h-9 rounded-full bg-black/60 hover:bg-[#D6A85C] border border-white/20 hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#080908] flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-lg"
+          className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/60 hover:bg-[#D6A85C] border border-white/20 hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#080908] flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-lg"
           title={isMuted ? "Unmute Audio" : "Mute Audio"}
         >
           {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
@@ -444,7 +444,7 @@ export default function HeroVideo({
             type="button"
             onClick={replayVideo}
             aria-label="Replay Video from Start"
-            className="w-9 h-9 rounded-full bg-black/60 hover:bg-[#D6A85C] border border-white/20 hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#080908] flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-lg"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/60 hover:bg-[#D6A85C] border border-white/20 hover:border-[#D6A85C] text-[#F2F0E8] hover:text-[#080908] flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-lg"
             title="Replay Video from Start"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -453,8 +453,8 @@ export default function HeroVideo({
       </div>
 
       {/* MINIMAL HERO CONTENT: DOCKED AT BOTTOM ON MOBILE, RIGHT-ALIGNED ON DESKTOP */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-10 lg:px-16 pt-20 pb-20 md:py-24 flex flex-col justify-end md:justify-center items-center md:items-end pointer-events-none h-full">
-        <div className="w-full max-w-sm sm:max-w-md text-left pointer-events-auto bg-[#080a08]/90 md:bg-[#080a08]/85 backdrop-blur-xl p-4 sm:p-6 md:p-7 rounded-2xl border border-[#D6A85C]/35 shadow-[0_20px_60px_rgba(0,0,0,0.85)] mb-3 md:mb-0">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-16 pt-20 pb-14 sm:pb-16 md:py-24 flex flex-col justify-end md:justify-center items-center md:items-end pointer-events-none h-full">
+        <div className="w-full max-w-sm sm:max-w-md text-left pointer-events-auto bg-[#080a08]/92 md:bg-[#080a08]/85 backdrop-blur-xl p-4 sm:p-6 md:p-7 rounded-2xl border border-[#D6A85C]/35 shadow-[0_20px_60px_rgba(0,0,0,0.85)] mb-2 md:mb-0">
           {/* Eyebrow Badge */}
           {eyebrow && (
             <div className="inline-flex items-center gap-2 text-[9px] sm:text-[10.5px] uppercase tracking-[0.2em] text-[#D6A85C] font-semibold py-0.5 px-2.5 sm:py-1 sm:px-3 rounded-full border border-[#D6A85C]/40 bg-[#121612]/90 backdrop-blur-md shadow-sm mb-2 sm:mb-2.5">
@@ -478,8 +478,8 @@ export default function HeroVideo({
             </p>
           )}
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2.5 sm:gap-3 mt-1 sm:mt-0">
+          {/* Action Buttons: pr-14 on mobile guarantees zero overlap with floating WhatsApp button */}
+          <div className="flex items-center gap-2 sm:gap-3 mt-1 sm:mt-0 pr-14 sm:pr-0">
             <button
               type="button"
               onClick={() => {
@@ -489,10 +489,10 @@ export default function HeroVideo({
                 hasCompletedOnceRef.current = true;
                 onPrimaryCtaClick && onPrimaryCtaClick();
               }}
-              className="flex-1 sm:flex-initial px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-[10px] sm:text-[10.5px] uppercase tracking-[0.16em] font-bold hover:brightness-110 hover:shadow-[0_6px_20px_rgba(214,168,92,0.4)] transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer shadow-lg whitespace-nowrap"
+              className="flex-1 sm:flex-initial px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.14em] sm:tracking-[0.16em] font-bold hover:brightness-110 hover:shadow-[0_6px_20px_rgba(214,168,92,0.4)] transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 cursor-pointer shadow-lg whitespace-nowrap"
             >
               <span>{primaryCtaText}</span>
-              <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
+              <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 -rotate-90" />
             </button>
 
             <a
@@ -503,7 +503,7 @@ export default function HeroVideo({
                 isCompletedRef.current = true;
                 hasCompletedOnceRef.current = true;
               }}
-              className="flex-1 sm:flex-initial px-4 py-2 sm:px-5 sm:py-2.5 rounded-full border border-white/25 hover:border-[#D6A85C] bg-[#161a16]/80 hover:bg-[#D6A85C]/20 backdrop-blur-md text-[#F2F0E8] hover:text-[#D6A85C] text-[10px] sm:text-[10.5px] uppercase tracking-[0.16em] font-medium transition-all duration-300 text-center cursor-pointer whitespace-nowrap"
+              className="flex-1 sm:flex-initial px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-full border border-white/25 hover:border-[#D6A85C] bg-[#161a16]/80 hover:bg-[#D6A85C]/20 backdrop-blur-md text-[#F2F0E8] hover:text-[#D6A85C] text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.14em] sm:tracking-[0.16em] font-medium transition-all duration-300 text-center cursor-pointer whitespace-nowrap"
             >
               {secondaryCtaText}
             </a>
@@ -512,7 +512,7 @@ export default function HeroVideo({
       </div>
 
       {/* BOTTOM STATUS BAR: Live Playback Progress & Scroll Indicator (right-20 avoids WhatsApp collision on mobile) */}
-      <div className="absolute bottom-4 left-4 right-20 sm:left-10 sm:right-10 md:left-16 md:right-16 z-20 flex items-center justify-between text-xs uppercase tracking-[0.2em] pointer-events-auto">
+      <div className="absolute bottom-3 left-4 right-20 sm:left-10 sm:right-10 md:left-16 md:right-16 z-20 flex items-center justify-between text-xs uppercase tracking-[0.2em] pointer-events-auto">
         {/* Live Playback Status Badge */}
         <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/15 backdrop-blur-md shadow-md">
           <span
@@ -541,13 +541,13 @@ export default function HeroVideo({
         <button
           type="button"
           onClick={scrollToFounders}
-          className={`inline-flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs transition-all ml-auto group/scroll backdrop-blur-md px-3.5 py-2 sm:px-4 sm:py-2 rounded-full shadow-lg cursor-pointer ${
+          className={`inline-flex items-center gap-1.5 sm:gap-2 text-[9.5px] sm:text-xs transition-all ml-auto group/scroll backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full shadow-lg cursor-pointer ${
             isCompleted
               ? "bg-[#D6A85C] text-[#080908] font-bold border border-[#D6A85C] hover:bg-[#B87333]"
               : "bg-black/75 text-[#D6A85C] border border-white/15 hover:border-[#D6A85C]"
           }`}
         >
-          <span className="tracking-[0.15em] sm:tracking-[0.18em]">
+          <span className="tracking-[0.14em] sm:tracking-[0.18em]">
             {isCompleted
               ? "CONTINUE ↓"
               : isPlaying
@@ -569,7 +569,7 @@ export default function HeroVideo({
       </div>
 
       {/* THIN GOLD PROGRESS TIMELINE AT VERY BOTTOM */}
-      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-white/10 z-20">
+      <div className="absolute bottom-0 left-0 right-0 h-1 sm:h-1.5 bg-white/10 z-20">
         <div
           className="h-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] transition-all duration-150"
           style={{ width: `${progressPercent}%` }}

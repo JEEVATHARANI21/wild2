@@ -101,7 +101,7 @@ export default function ToeholdNavbar({
         </div>
 
         {/* 2. Navigation Items: Destinations, Gallery, About, FAQ, Contact */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-[12px] font-sans tracking-[0.16em] uppercase font-medium">
+        <nav className="hidden xl:flex items-center gap-6 xl:gap-8 text-[12px] font-sans tracking-[0.16em] uppercase font-medium">
           <button
             type="button"
             onClick={() => handleNav('destinations')}
@@ -215,7 +215,7 @@ export default function ToeholdNavbar({
           type="button"
           onClick={() => setMobileMenuOpen((prev) => !prev)}
           aria-label="Toggle navigation menu"
-          className="lg:hidden flex flex-col items-center justify-center w-10 h-10 rounded-xl bg-[#151815] border border-[#242923] text-[#F2F0E8] focus:outline-none cursor-pointer"
+          className="xl:hidden flex flex-col items-center justify-center w-10 h-10 rounded-xl bg-[#151815] border border-[#242923] text-[#F2F0E8] focus:outline-none cursor-pointer"
         >
           <span
             className={`block w-5 h-0.5 bg-[#F2F0E8] transition-transform duration-300 ${
@@ -237,7 +237,7 @@ export default function ToeholdNavbar({
 
       {/* Mobile Drawer Menu */}
       <div
-        className={`fixed inset-0 z-50 lg:hidden flex flex-col justify-between p-6 bg-[#080908]/98 backdrop-blur-2xl border-b border-[#242923] transition-all duration-300 ease-out overflow-y-auto ${
+        className={`fixed inset-0 z-50 xl:hidden flex flex-col justify-between p-6 bg-[#080908]/98 backdrop-blur-2xl border-b border-[#242923] transition-all duration-300 ease-out overflow-y-auto ${
           mobileMenuOpen
             ? 'opacity-100 pointer-events-auto translate-y-0'
             : 'opacity-0 pointer-events-none -translate-y-4'

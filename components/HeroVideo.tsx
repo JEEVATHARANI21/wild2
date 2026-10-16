@@ -452,28 +452,28 @@ export default function HeroVideo({
         )}
       </div>
 
-      {/* MINIMAL HERO CONTENT ON THE RIGHT SIDE */}
+      {/* MINIMAL HERO CONTENT ON THE RIGHT SIDE: HIGH-CONTRAST FROSTED CARD */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-24 pb-16 flex items-center justify-end pointer-events-none">
-        <div className="max-w-sm sm:max-w-md text-left pointer-events-auto bg-[#080908]/40 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none p-5 sm:p-6 md:p-0 rounded-2xl md:border-none shadow-xl md:shadow-none">
+        <div className="max-w-sm sm:max-w-md text-left pointer-events-auto bg-[#080a08]/85 backdrop-blur-xl p-6 sm:p-7 rounded-2xl border border-[#D6A85C]/35 shadow-[0_20px_60px_rgba(0,0,0,0.85)]">
           {/* Eyebrow Badge */}
           {eyebrow && (
-            <div className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-[#D6A85C] font-semibold py-1 px-3 rounded-full border border-[#D6A85C]/40 bg-[#080a08]/85 backdrop-blur-md shadow-md mb-2.5">
+            <div className="inline-flex items-center gap-2 text-[10px] sm:text-[10.5px] uppercase tracking-[0.22em] text-[#D6A85C] font-semibold py-1 px-3 rounded-full border border-[#D6A85C]/40 bg-[#121612]/90 backdrop-blur-md shadow-sm mb-3">
               <span className="w-1.5 h-1.5 rounded-full bg-[#D6A85C]" />
               <span>{eyebrow}</span>
             </div>
           )}
 
           {/* Main Headline */}
-          <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-[2.6rem] font-light leading-[1.12] tracking-tight text-[#F2F0E8] drop-shadow-2xl mb-2.5">
+          <h1 className="font-serif text-2xl sm:text-3xl lg:text-[2.1rem] font-light leading-[1.15] tracking-tight text-[#FFFFFF] drop-shadow-md mb-2.5">
             <span>Bespoke Photographic </span>
-            <span className="text-[#D6A85C] italic font-normal block sm:inline">
+            <span className="text-[#E5B560] italic font-normal block sm:inline">
               Expeditions
             </span>
           </h1>
 
           {/* Minimal Supporting Description */}
           {description && (
-            <p className="text-xs sm:text-sm text-[#F2F0E8]/85 font-light leading-relaxed max-w-sm sm:max-w-md font-sans drop-shadow-md mb-4 sm:mb-5">
+            <p className="text-xs sm:text-[13px] text-[#E8E6DE] font-normal leading-relaxed font-sans drop-shadow-sm mb-5">
               {description}
             </p>
           )}
@@ -489,7 +489,7 @@ export default function HeroVideo({
                 hasCompletedOnceRef.current = true;
                 onPrimaryCtaClick && onPrimaryCtaClick();
               }}
-              className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-[10.5px] uppercase tracking-[0.16em] font-bold hover:brightness-110 hover:shadow-[0_6px_20px_rgba(214,168,92,0.35)] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg whitespace-nowrap"
+              className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-[10.5px] uppercase tracking-[0.16em] font-bold hover:brightness-110 hover:shadow-[0_6px_20px_rgba(214,168,92,0.4)] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg whitespace-nowrap"
             >
               <span>{primaryCtaText}</span>
               <ChevronDown className="w-3.5 h-3.5 -rotate-90" />
@@ -503,7 +503,7 @@ export default function HeroVideo({
                 isCompletedRef.current = true;
                 hasCompletedOnceRef.current = true;
               }}
-              className="px-5 py-2.5 rounded-full border border-white/20 hover:border-[#D6A85C] bg-black/40 hover:bg-[#D6A85C]/15 backdrop-blur-md text-[#F2F0E8] hover:text-[#D6A85C] text-[10.5px] uppercase tracking-[0.16em] font-medium transition-all duration-300 text-center cursor-pointer whitespace-nowrap"
+              className="px-5 py-2.5 rounded-full border border-white/25 hover:border-[#D6A85C] bg-[#161a16]/80 hover:bg-[#D6A85C]/20 backdrop-blur-md text-[#F2F0E8] hover:text-[#D6A85C] text-[10.5px] uppercase tracking-[0.16em] font-medium transition-all duration-300 text-center cursor-pointer whitespace-nowrap"
             >
               {secondaryCtaText}
             </a>

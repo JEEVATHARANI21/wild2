@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState, useCallback } from "react";
-import { ArrowRight, ChevronDown, Volume2, VolumeX, MousePointer, RotateCcw } from "lucide-react";
+import { ChevronDown, Volume2, VolumeX, MousePointer, RotateCcw } from "lucide-react";
 
 interface HeroVideoProps {
   src?: string;
@@ -47,11 +47,6 @@ export default function HeroVideo({
   isPlayingRef.current = isPlaying;
   isLockedRef.current = isLocked;
   isCompletedRef.current = isCompleted;
-
-  // Split title lines
-  const titleLines = title.split("\n");
-  const line1 = titleLines[0] || title;
-  const line2 = titleLines[1] || "";
 
   // Helper: Lock / Unlock page scrolling
   const setScrollLock = useCallback((locked: boolean) => {
@@ -408,9 +403,6 @@ export default function HeroVideo({
           />
         </video>
 
-        {/* CINEMATIC CONTRAST GRADIENTS: Left vignette ensures crisp text legibility while keeping the tiger completely bright */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#060806]/90 via-[#060806]/55 via-35% md:via-[#060806]/40 to-transparent pointer-events-none" />
-
         {/* Top & Bottom blends for seamless navbar and section integration */}
         <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-[#060806]/85 to-transparent pointer-events-none" />
         <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#060806] to-transparent pointer-events-none" />
@@ -455,83 +447,6 @@ export default function HeroVideo({
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
         )}
-      </div>
-
-      {/* HERO CONTENT: Left-Aligned Column That Doesn't Obscure the Tiger */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-20 sm:pt-24 pb-14 flex flex-col justify-center pointer-events-none">
-        <div className="max-w-xl text-left pointer-events-auto">
-          {/* Eyebrow Badge */}
-          <div className="inline-flex items-center gap-2 text-[10px] sm:text-xs uppercase tracking-[0.24em] text-[#D6A85C] font-semibold py-1.5 px-3.5 rounded-full border border-[#D6A85C]/40 bg-[#080a08]/85 backdrop-blur-md shadow-md mb-3 sm:mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D6A85C]" />
-            <span>{eyebrow}</span>
-          </div>
-
-          {/* Main Headline */}
-          <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-[4.2rem] font-light leading-[1.06] tracking-tight text-[#F2F0E8] drop-shadow-2xl mb-3 sm:mb-5">
-            <span className="block">{line1}</span>
-            {line2 && (
-              <span className="block text-[#D6A85C] font-normal italic mt-1">
-                {line2}
-              </span>
-            )}
-          </h1>
-
-          {/* Supporting Description */}
-          <p className="text-xs sm:text-sm md:text-base text-[#F2F0E8]/90 font-light leading-relaxed max-w-lg font-sans drop-shadow-md mb-6 sm:mb-8">
-            {description}
-          </p>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={() => {
-                setScrollLock(false);
-                setIsCompleted(true);
-                isCompletedRef.current = true;
-                hasCompletedOnceRef.current = true;
-                onPrimaryCtaClick && onPrimaryCtaClick();
-              }}
-              className="px-7 py-3.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-xs uppercase tracking-[0.18em] font-bold hover:brightness-110 hover:shadow-[0_6px_25px_rgba(214,168,92,0.4)] transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer shadow-lg whitespace-nowrap"
-            >
-              <span>{primaryCtaText}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
-            <a
-              href="#destinations"
-              onClick={() => {
-                setScrollLock(false);
-                setIsCompleted(true);
-                isCompletedRef.current = true;
-                hasCompletedOnceRef.current = true;
-              }}
-              className="px-7 py-3.5 rounded-full border border-white/25 hover:border-[#D6A85C] bg-black/40 hover:bg-[#D6A85C]/15 backdrop-blur-md text-[#F2F0E8] hover:text-[#D6A85C] text-xs uppercase tracking-[0.18em] font-medium transition-all duration-300 text-center cursor-pointer whitespace-nowrap"
-            >
-              {secondaryCtaText}
-            </a>
-          </div>
-
-          {/* Core Trust Pillars */}
-          <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-2 text-[10px] sm:text-xs font-sans tracking-[0.14em] uppercase text-[#F2F0E8]/80 font-medium pt-3.5 border-t border-white/10 max-w-lg">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[#D6A85C]">📍</span>
-              <span>India's Premier Wilds</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[#D6A85C]">📷</span>
-              <span>Field Masterclasses</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[#D6A85C]">👥</span>
-              <span>Max 4 / Gypsy</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[#D6A85C]">🌿</span>
-              <span>Ethical Tracking</span>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* BOTTOM STATUS BAR: Live Playback Progress & Scroll Indicator */}

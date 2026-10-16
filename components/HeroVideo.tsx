@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState, useCallback } from "react";
-import { ChevronDown, Volume2, VolumeX, MousePointer, RotateCcw } from "lucide-react";
+import { ArrowRight, ChevronDown, Volume2, VolumeX, MousePointer, RotateCcw } from "lucide-react";
 
 interface HeroVideoProps {
   src?: string;
@@ -447,6 +447,61 @@ export default function HeroVideo({
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
         )}
+      </div>
+
+      {/* MINIMAL LEFT-SIDE HERO CONTENT */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 flex items-center pointer-events-none">
+        <div className="max-w-xs sm:max-w-sm text-left pointer-events-auto bg-black/40 backdrop-blur-md p-5 sm:p-6 rounded-2xl border border-white/10 shadow-2xl">
+          {/* Subtle Eyebrow */}
+          <div className="inline-flex items-center gap-2 text-[9.5px] sm:text-[10px] uppercase tracking-[0.24em] text-[#D6A85C] font-semibold mb-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D6A85C]" />
+            <span>THE PINNACLE OF WILDLIFE</span>
+          </div>
+
+          {/* Minimal Headline */}
+          <h1 className="font-serif text-2xl sm:text-3xl font-light text-[#F2F0E8] leading-tight mb-2 drop-shadow-md">
+            <span>Bespoke Photographic</span>{" "}
+            <span className="text-[#D6A85C] italic font-normal">Expeditions</span>
+          </h1>
+
+          {/* 1-Line Minimal Essence */}
+          <p className="text-xs sm:text-[13px] text-[#F2F0E8]/85 font-light leading-relaxed mb-4">
+            Masterclass field tracking & intimate safaris across India's premier tiger reserves.
+          </p>
+
+          {/* Minimal Actions */}
+          <div className="flex items-center gap-3">
+            <a
+              href="#tours"
+              onClick={() => {
+                setScrollLock(false);
+                setIsCompleted(true);
+                isCompletedRef.current = true;
+                hasCompletedOnceRef.current = true;
+                const el = document.getElementById("tours") || document.getElementById("packages") || document.getElementById("founders");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-[10.5px] sm:text-xs uppercase tracking-[0.16em] font-bold hover:brightness-110 shadow-md transition-all inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+            >
+              <span>{secondaryCtaText || "EXPLORE TOURS"}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </a>
+
+            <button
+              type="button"
+              onClick={() => {
+                setScrollLock(false);
+                setIsCompleted(true);
+                isCompletedRef.current = true;
+                hasCompletedOnceRef.current = true;
+                onPrimaryCtaClick && onPrimaryCtaClick();
+              }}
+              className="text-[10.5px] sm:text-xs uppercase tracking-[0.16em] text-[#F2F0E8]/80 hover:text-[#D6A85C] transition-colors font-medium px-2 py-1 cursor-pointer whitespace-nowrap"
+            >
+              {primaryCtaText || "ENQUIRE"}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* BOTTOM STATUS BAR: Live Playback Progress & Scroll Indicator */}

@@ -382,7 +382,7 @@ export default function HeroVideo({
   return (
     <section
       ref={containerRef}
-      className="relative w-full h-[100dvh] min-h-[100svh] overflow-hidden select-none bg-[#060806] flex flex-col justify-between"
+      className="relative w-full h-[100dvh] min-h-[100svh] overflow-hidden select-none bg-[#060806]"
     >
       {/* FULLSCREEN ROYAL BENGAL TIGER VIDEO BACKGROUND */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -392,30 +392,30 @@ export default function HeroVideo({
           playsInline
           preload="auto"
           poster={poster}
-          className="w-full h-full object-cover object-[center_35%] md:object-[62%_35%] brightness-[0.96] contrast-[1.04]"
+          className="w-full h-full object-cover object-[center_28%] md:object-[62%_35%] brightness-[0.96] contrast-[1.04]"
         >
           <source src="/videos/home-hero.mp4" type="video/mp4" />
           <source src="/videos/IMG_8206.MOV" type="video/quicktime" />
           <img
             src={poster}
             alt="Wild Bengal Tiger — VM Wild Expeditions"
-            className="w-full h-full object-cover object-[center_35%] md:object-[62%_35%]"
+            className="w-full h-full object-cover object-[center_28%] md:object-[62%_35%]"
           />
         </video>
 
         {/* Subtle Right-Side Gradient: provides soft contrast for right-side text without darkening the tiger on the left/center */}
-        <div className="absolute inset-y-0 right-0 w-full sm:w-2/3 md:w-1/2 bg-gradient-to-l from-[#060806]/85 via-[#060806]/40 to-transparent pointer-events-none" />
+        <div className="hidden md:block absolute inset-y-0 right-0 w-full sm:w-2/3 md:w-1/2 bg-gradient-to-l from-[#060806]/85 via-[#060806]/40 to-transparent pointer-events-none" />
 
         {/* Top & Bottom blends for seamless navbar and section integration */}
         <div className="absolute top-0 left-0 right-0 h-24 sm:h-28 bg-gradient-to-b from-[#060806]/90 to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 left-0 right-0 h-24 sm:h-28 bg-gradient-to-t from-[#060806] to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-36 sm:h-40 bg-gradient-to-t from-[#060806] via-[#060806]/95 to-transparent pointer-events-none md:h-28 md:via-transparent" />
       </div>
 
       {/* TOP-RIGHT CONTROLS: Scroll Status Guidance & Sound Toggle */}
       <div className="absolute top-18 sm:top-24 right-4 sm:right-10 md:right-14 z-20 flex items-center gap-2 sm:gap-2.5 pointer-events-auto">
-        {/* Scroll Status Guidance Badge */}
+        {/* Scroll Status Guidance Badge (Desktop only) */}
         {!isCompleted && (
-          <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-[#D6A85C]/40 backdrop-blur-md text-[10px] uppercase tracking-[0.2em] text-[#D6A85C] shadow-lg">
+          <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-[#D6A85C]/40 backdrop-blur-md text-[10px] uppercase tracking-[0.2em] text-[#D6A85C] shadow-lg">
             <MousePointer className={`w-3 h-3 text-[#D6A85C] ${isPlaying ? "animate-pulse" : ""}`} />
             <span>
               {isPlaying
@@ -452,9 +452,10 @@ export default function HeroVideo({
         )}
       </div>
 
-      {/* MINIMAL HERO CONTENT: DOCKED AT BOTTOM ON MOBILE, RIGHT-ALIGNED ON DESKTOP */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-16 pt-20 pb-14 sm:pb-16 md:py-24 flex flex-col justify-end md:justify-center items-center md:items-end pointer-events-none h-full">
-        <div className="w-full max-w-sm sm:max-w-md text-left pointer-events-auto bg-[#080a08]/92 md:bg-[#080a08]/85 backdrop-blur-xl p-4 sm:p-6 md:p-7 rounded-2xl border border-[#D6A85C]/35 shadow-[0_20px_60px_rgba(0,0,0,0.85)] mb-2 md:mb-0">
+      {/* HERO CONTENT: FULL-BLEED SEAMLESS BOTTOM DOCK ON MOBILE, FLOATING LUXURY CARD ON DESKTOP */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-16 flex flex-col justify-end md:justify-center items-center md:items-end pointer-events-none h-full pb-[max(1.25rem,calc(env(safe-area-inset-bottom)+0.75rem))] md:py-24">
+        {/* On mobile: full-bleed seamless dock with gradient background; on desktop: luxury floating frosted-glass card */}
+        <div className="w-full md:max-w-md text-left pointer-events-auto bg-gradient-to-t from-[#060806] via-[#060806]/95 to-transparent p-4 sm:p-5 md:p-7 rounded-none md:rounded-2xl border-0 md:border md:border-[#D6A85C]/35 md:bg-[#080a08]/85 md:backdrop-blur-xl shadow-none md:shadow-[0_20px_60px_rgba(0,0,0,0.85)]">
           {/* Eyebrow Badge */}
           {eyebrow && (
             <div className="inline-flex items-center gap-2 text-[9px] sm:text-[10.5px] uppercase tracking-[0.2em] text-[#D6A85C] font-semibold py-0.5 px-2.5 sm:py-1 sm:px-3 rounded-full border border-[#D6A85C]/40 bg-[#121612]/90 backdrop-blur-md shadow-sm mb-2 sm:mb-2.5">
@@ -464,22 +465,56 @@ export default function HeroVideo({
           )}
 
           {/* Main Headline */}
-          <h1 className="font-serif text-lg sm:text-2xl md:text-3xl lg:text-[2.1rem] font-light leading-[1.15] tracking-tight text-[#FFFFFF] drop-shadow-md mb-2 sm:mb-2.5">
+          <h1 className="font-serif text-xl sm:text-2xl md:text-3xl lg:text-[2.1rem] font-light leading-[1.15] tracking-tight text-[#FFFFFF] drop-shadow-md mb-2 sm:mb-2.5">
             <span>Bespoke Photographic </span>
             <span className="text-[#E5B560] italic font-normal block sm:inline">
               Expeditions
             </span>
           </h1>
 
-          {/* Minimal Supporting Description: Hidden on small mobile screens to keep the tiger 100% visible */}
+          {/* Minimal Supporting Description: Hidden on small mobile screens to keep the tiger prominent */}
           {description && (
             <p className="hidden sm:block text-xs sm:text-[13px] text-[#E8E6DE] font-normal leading-relaxed font-sans drop-shadow-sm mb-4 sm:mb-5">
               {description}
             </p>
           )}
 
-          {/* Action Buttons: pr-14 on mobile guarantees zero overlap with floating WhatsApp button */}
-          <div className="flex items-center gap-2 sm:gap-3 mt-1 sm:mt-0 pr-14 sm:pr-0">
+          {/* Mobile Live Scroll / Playback Guidance Bar (embedded cleanly inside dock on mobile) */}
+          <div className="md:hidden flex items-center justify-between mb-3 px-3 py-1.5 rounded-full bg-black/70 border border-[#D6A85C]/35 backdrop-blur-md text-[9.5px] uppercase tracking-[0.16em] text-[#D6A85C]">
+            <div className="flex items-center gap-2">
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  isCompleted
+                    ? "bg-emerald-400"
+                    : isPlaying
+                    ? "bg-[#D6A85C] animate-pulse"
+                    : hasStarted
+                    ? "bg-amber-400"
+                    : "bg-white/40"
+                }`}
+              />
+              <span className="font-semibold">
+                {isCompleted
+                  ? "EXPEDITION UNLOCKED • 100%"
+                  : isPlaying
+                  ? `PLAYING ON SCROLL • ${progressPercent}%`
+                  : hasStarted
+                  ? `PAUSED (${progressPercent}%) • SCROLL TO RESUME`
+                  : "SCROLL TO PLAY VIDEO"}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={scrollToFounders}
+              className="flex items-center gap-1 text-[#F2F0E8] hover:text-[#D6A85C] font-bold text-[9px] tracking-wider transition-colors cursor-pointer"
+            >
+              <span>{isCompleted ? "NEXT" : "CONTINUE"}</span>
+              <ChevronDown className="w-3 h-3" />
+            </button>
+          </div>
+
+          {/* Action Buttons: Clean 2-column grid on mobile, flexible row on desktop */}
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-3">
             <button
               type="button"
               onClick={() => {
@@ -489,7 +524,7 @@ export default function HeroVideo({
                 hasCompletedOnceRef.current = true;
                 onPrimaryCtaClick && onPrimaryCtaClick();
               }}
-              className="flex-1 sm:flex-initial px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.14em] sm:tracking-[0.16em] font-bold hover:brightness-110 hover:shadow-[0_6px_20px_rgba(214,168,92,0.4)] transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 cursor-pointer shadow-lg whitespace-nowrap"
+              className="px-3.5 py-2.5 sm:px-5 sm:py-2.5 rounded-full bg-gradient-to-r from-[#D6A85C] to-[#B87333] text-[#080908] text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.14em] sm:tracking-[0.16em] font-bold hover:brightness-110 hover:shadow-[0_6px_20px_rgba(214,168,92,0.4)] transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 cursor-pointer shadow-lg whitespace-nowrap"
             >
               <span>{primaryCtaText}</span>
               <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 -rotate-90" />
@@ -503,7 +538,7 @@ export default function HeroVideo({
                 isCompletedRef.current = true;
                 hasCompletedOnceRef.current = true;
               }}
-              className="flex-1 sm:flex-initial px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-full border border-white/25 hover:border-[#D6A85C] bg-[#161a16]/80 hover:bg-[#D6A85C]/20 backdrop-blur-md text-[#F2F0E8] hover:text-[#D6A85C] text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.14em] sm:tracking-[0.16em] font-medium transition-all duration-300 text-center cursor-pointer whitespace-nowrap"
+              className="px-3.5 py-2.5 sm:px-5 sm:py-2.5 rounded-full border border-white/25 hover:border-[#D6A85C] bg-[#161a16]/80 hover:bg-[#D6A85C]/20 backdrop-blur-md text-[#F2F0E8] hover:text-[#D6A85C] text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.14em] sm:tracking-[0.16em] font-medium transition-all duration-300 flex items-center justify-center cursor-pointer whitespace-nowrap"
             >
               {secondaryCtaText}
             </a>
@@ -511,10 +546,10 @@ export default function HeroVideo({
         </div>
       </div>
 
-      {/* BOTTOM STATUS BAR: Live Playback Progress & Scroll Indicator (right-20 avoids WhatsApp collision on mobile) */}
-      <div className="absolute bottom-3 left-4 right-20 sm:left-10 sm:right-10 md:left-16 md:right-16 z-20 flex items-center justify-between text-xs uppercase tracking-[0.2em] pointer-events-auto">
+      {/* DESKTOP BOTTOM STATUS BAR (Hidden on mobile since it's cleanly embedded in the mobile dock) */}
+      <div className="hidden md:flex absolute bottom-4 left-10 right-10 md:left-16 md:right-16 z-20 items-center justify-between text-xs uppercase tracking-[0.2em] pointer-events-auto">
         {/* Live Playback Status Badge */}
-        <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/15 backdrop-blur-md shadow-md">
+        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-white/15 backdrop-blur-md shadow-md">
           <span
             className={`w-2 h-2 rounded-full ${
               isCompleted
@@ -541,13 +576,13 @@ export default function HeroVideo({
         <button
           type="button"
           onClick={scrollToFounders}
-          className={`inline-flex items-center gap-1.5 sm:gap-2 text-[9.5px] sm:text-xs transition-all ml-auto group/scroll backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full shadow-lg cursor-pointer ${
+          className={`inline-flex items-center gap-2 text-xs transition-all ml-auto group/scroll backdrop-blur-md px-4 py-2 rounded-full shadow-lg cursor-pointer ${
             isCompleted
               ? "bg-[#D6A85C] text-[#080908] font-bold border border-[#D6A85C] hover:bg-[#B87333]"
               : "bg-black/75 text-[#D6A85C] border border-white/15 hover:border-[#D6A85C]"
           }`}
         >
-          <span className="tracking-[0.14em] sm:tracking-[0.18em]">
+          <span className="tracking-[0.18em]">
             {isCompleted
               ? "CONTINUE ↓"
               : isPlaying

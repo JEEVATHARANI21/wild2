@@ -13,7 +13,7 @@ export default function WhatsAppButton() {
   return (
     <aside
       aria-label="WhatsApp Support"
-      className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 flex items-center gap-3 select-none"
+      className="fixed bottom-24 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center gap-3 select-none"
     >
       {/* Tooltip on hover */}
       <div
@@ -33,7 +33,7 @@ export default function WhatsAppButton() {
         rel="noopener noreferrer"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="group relative flex items-center justify-center w-13 h-13 rounded-full bg-[#121411] border border-[#25D366]/40 hover:border-[#25D366] shadow-[0_4px_25px_rgba(0,0,0,0.8),0_0_20px_rgba(37,211,102,0.3)] hover:shadow-[0_4px_30px_rgba(0,0,0,0.9),0_0_30px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-105 cursor-pointer"
+        className="group relative flex items-center justify-center w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-[#121411] border border-[#25D366]/40 hover:border-[#25D366] shadow-[0_4px_25px_rgba(0,0,0,0.8),0_0_20px_rgba(37,211,102,0.3)] hover:shadow-[0_4px_30px_rgba(0,0,0,0.9),0_0_30px_rgba(37,211,102,0.6)] transition-all duration-300 hover:scale-105 cursor-pointer"
         title="Chat on WhatsApp"
         aria-label="Chat on WhatsApp"
       >
@@ -42,7 +42,7 @@ export default function WhatsAppButton() {
 
         {/* WhatsApp Icon */}
         <svg
-          className="w-6 h-6 text-[#25D366] group-hover:scale-110 transition-transform duration-300"
+          className="w-5 h-5 sm:w-6 sm:h-6 text-[#25D366] group-hover:scale-110 transition-transform duration-300"
           viewBox="0 0 24 24"
           fill="currentColor"
         >

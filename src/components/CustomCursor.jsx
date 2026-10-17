@@ -1,15 +1,19 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function CustomCursor() {
   const dotRef = useRef(null)
   const ringRef = useRef(null)
   const viewRef = useRef(null)
+  const [enabled, setEnabled] = useState(false)
 
   useEffect(() => {
     // Only enable custom cursor on devices with fine pointer (mouse/trackpad)
+    if (typeof window === 'undefined') return
     if (window.matchMedia('(pointer: coarse)').matches || !window.matchMedia('(hover: hover)').matches) {
       return
     }
+
+    setEnabled(true)
 
     const dot = dotRef.current
     const ring = ringRef.current
@@ -71,6 +75,8 @@ export default function CustomCursor() {
       clearTimeout(idleTimer)
     }
   }, [])
+
+  if (!enabled) return null
 
   return (
     <>

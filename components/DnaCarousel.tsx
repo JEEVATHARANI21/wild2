@@ -178,8 +178,8 @@ export default function DnaCarousel({
     // Depth factor normalized (0.0 = far back, 1.0 = front)
     const depth = (z + zRadius) / (2 * zRadius);
 
-    // Lens optical blur & chromatic aberration calculation
-    const blurAmount = Math.max((1 - depth) * 7, 0); // Far ones blurred
+    // Lens optical blur & chromatic aberration calculation - optimized for GPU performance
+    const blurAmount = Math.max((1 - depth) * (isMobile ? 3 : 7), 0);
     const opacity = 0.35 + depth * 0.65;
     const scale = isMobile ? 0.72 + depth * 0.32 : 0.68 + depth * 0.38;
     const zIndex = Math.round(depth * 100);
@@ -193,9 +193,11 @@ export default function DnaCarousel({
     const scaleFixed = scale.toFixed(3);
     const opacityFixed = Number(opacity.toFixed(3));
 
-    // Chromatic fringe CSS filter for far background cards
+    // Chromatic fringe CSS filter (simplified on mobile to eliminate GPU rasterization bottlenecks)
     const isFar = depth < 0.5;
-    const fringeFilter = isFar
+    const fringeFilter = isMobile
+      ? blurAmount > 0.5 ? `blur(${blurAmount.toFixed(1)}px)` : "none"
+      : isFar
       ? `blur(${blurAmount.toFixed(1)}px) drop-shadow(-4px 0px 3px rgba(255, 0, 80, 0.45)) drop-shadow(4px 0px 3px rgba(0, 240, 255, 0.45))`
       : `blur(${blurAmount.toFixed(1)}px)`;
 

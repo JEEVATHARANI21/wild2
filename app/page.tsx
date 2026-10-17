@@ -77,6 +77,30 @@ function MainApp() {
   };
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // On mobile touch devices, use native 60Hz/120Hz hardware scrolling for zero touch lag
+    const isTouch =
+      window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
+
+    if (isTouch) {
+      const fallbackLenis = {
+        stop: () => {},
+        start: () => {},
+        scrollTo: (target: any) => {
+          if (typeof target === "number") {
+            window.scrollTo({ top: target, behavior: "smooth" });
+          } else if (target instanceof HTMLElement) {
+            target.scrollIntoView({ behavior: "smooth" });
+          }
+        },
+      };
+      (window as any).__lenis = fallbackLenis;
+      return () => {
+        delete (window as any).__lenis;
+      };
+    }
+
     const lenis = new Lenis({
       duration: 0.85,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -85,9 +109,7 @@ function MainApp() {
       touchMultiplier: 1.5,
     } as any);
     lenisRef.current = lenis;
-    if (typeof window !== "undefined") {
-      (window as any).__lenis = lenis;
-    }
+    (window as any).__lenis = lenis;
 
     lenis.on("scroll", ScrollTrigger.update);
     const tickerCb = (time: number) => {
@@ -99,9 +121,7 @@ function MainApp() {
     return () => {
       lenis.destroy();
       gsap.ticker.remove(tickerCb);
-      if (typeof window !== "undefined") {
-        delete (window as any).__lenis;
-      }
+      delete (window as any).__lenis;
     };
   }, []);
 

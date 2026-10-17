@@ -8,7 +8,7 @@ export default function ToursHero({ onPlanTrip }) {
     headlinePart2: 'Still Roams.',
     description: "Expert-led wildlife and bird photography tours across India's most extraordinary wildernesses — designed for photographers, birders, and nature lovers who want more than a typical safari.",
     heroBgImage: '/images/home-hero-poster.jpg',
-    videoSrc: '/videos/IMG_8206.MOV',
+    videoSrc: '/videos/home-hero.mp4',
   }
 
   return (
@@ -20,11 +20,12 @@ export default function ToursHero({ onPlanTrip }) {
           loop
           muted
           playsInline
+          preload="metadata"
           poster={hero.heroBgImage || '/images/home-hero-poster.jpg'}
           className="w-full h-full object-cover object-[center_35%] brightness-[0.88] contrast-[1.05]"
         >
+          <source src="/videos/home-hero-mobile.mp4" type="video/mp4" media="(max-width: 768px)" />
           <source src="/videos/home-hero.mp4" type="video/mp4" />
-          <source src="/videos/IMG_8206.MOV" type="video/quicktime" />
           <img
             src={hero.heroBgImage || '/images/home-hero-poster.jpg'}
             alt="Wild Bengal Tiger — VM Wild Expeditions"

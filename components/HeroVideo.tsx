@@ -390,16 +390,18 @@ export default function HeroVideo({
           ref={videoRef}
           muted={isMuted}
           playsInline
-          preload="auto"
+          preload="metadata"
           poster={poster}
           className="w-full h-full object-cover object-[center_28%] md:object-[62%_35%] brightness-[0.96] contrast-[1.04]"
         >
+          <source src="/videos/home-hero-mobile.mp4" type="video/mp4" media="(max-width: 768px)" />
           <source src="/videos/home-hero.mp4" type="video/mp4" />
-          <source src="/videos/IMG_8206.MOV" type="video/quicktime" />
           <img
             src={poster}
             alt="Wild Bengal Tiger — VM Wild Expeditions"
             className="w-full h-full object-cover object-[center_28%] md:object-[62%_35%]"
+            loading="eager"
+            decoding="async"
           />
         </video>
 

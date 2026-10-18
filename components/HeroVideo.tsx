@@ -167,35 +167,58 @@ export default function HeroVideo({
     // Move smoothly to the next page (Founders section)
     setTimeout(() => {
       scrollToFounders();
-    }, 350);
+    }, 150);
   }, [setScrollLock, scrollToFounders]);
 
-  // Helper: Scroll activity detection — play on scroll, pause when scrolling stops
-  const handleScrollActivity = useCallback(() => {
-    if (isCompletedRef.current) return;
+  // Helper: Scroll activity detection — play on scroll, advance video, pause when scrolling stops
+  const handleScrollActivity = useCallback(
+    (deltaY?: number) => {
+      if (isCompletedRef.current) return;
 
-    if (!hasStartedRef.current) {
-      setHasStarted(true);
-      hasStartedRef.current = true;
-    }
-
-    // Keep sticky & locked while video is playing
-    setScrollLock(true);
-
-    // Resume or start playing from current timestamp
-    safePlay();
-
-    // Reset inactivity timer (~200ms threshold to prevent flickering during normal scroll gestures)
-    if (scrollPauseTimerRef.current) {
-      clearTimeout(scrollPauseTimerRef.current);
-    }
-
-    scrollPauseTimerRef.current = setTimeout(() => {
-      if (!isCompletedRef.current) {
-        safePause();
+      if (!hasStartedRef.current) {
+        setHasStarted(true);
+        hasStartedRef.current = true;
       }
-    }, 200);
-  }, [safePlay, safePause, setScrollLock]);
+
+      // Keep sticky & locked while video is playing
+      setScrollLock(true);
+
+      const video = videoRef.current;
+      if (video && video.duration && !isNaN(video.duration)) {
+        // Advance video timestamp with each deliberate scroll gesture
+        const advanceSec = deltaY
+          ? Math.max(1.0, Math.min(2.4, (Math.abs(deltaY) / 50) * 1.5))
+          : 1.4;
+
+        const nextTime = Math.min(video.currentTime + advanceSec, video.duration);
+        if (nextTime >= video.duration - 0.35) {
+          video.currentTime = video.duration;
+          handleVideoCompletion();
+          return;
+        }
+        video.currentTime = nextTime;
+        setProgress(nextTime / video.duration);
+        video.playbackRate = 1.25;
+      }
+
+      // Resume or start playing from current timestamp
+      safePlay();
+
+      // Inertia window: 750ms threshold so playback remains silky smooth during natural scrolling
+      if (scrollPauseTimerRef.current) {
+        clearTimeout(scrollPauseTimerRef.current);
+      }
+
+      scrollPauseTimerRef.current = setTimeout(() => {
+        if (!isCompletedRef.current) {
+          const v = videoRef.current;
+          if (v) v.playbackRate = 1.0;
+          safePause();
+        }
+      }, 750);
+    },
+    [safePlay, safePause, setScrollLock, handleVideoCompletion]
+  );
 
   // 1. Initial State: Disable autoplay on page load.
   // Video remains paused at frame 0 until the user starts scrolling.
@@ -223,7 +246,7 @@ export default function HeroVideo({
       const cur = Math.min(video.currentTime / video.duration, 1);
       setProgress(cur);
 
-      if (cur >= 0.985 && !isCompletedRef.current) {
+      if (cur >= 0.96 && !isCompletedRef.current) {
         handleVideoCompletion();
       }
     };
@@ -253,27 +276,26 @@ export default function HeroVideo({
 
   // 2 & 4. Scroll Detection & Viewport Sticky Engine (Desktop, Mobile, Trackpads, Keyboards):
   // - Plays video when user is scrolling
-  // - Pauses immediately when user stops scrolling
-  // - Resumes from current playback position when user scrolls again
-  // - Keeps hero sticky and next section hidden until video reaches end
+  // - Pauses when user stops scrolling with smooth 750ms inertia
+  // - Resumes and advances timestamp per gesture
+  // - Smoothly unlocks and transitions into Founders section
   useEffect(() => {
     // Wheel event handler (mouse wheel & trackpad)
     const onWheel = (e: WheelEvent) => {
       // If completed and user has scrolled down into subsequent sections, allow normal scrolling
       if (isCompletedRef.current && window.scrollY > 20) return;
 
-      // 7. Handle reverse scrolling: If already completed once, allow free scrolling
+      // Handle reverse scrolling: If already completed once, allow free scrolling
       if (hasCompletedOnceRef.current) return;
 
       // While video is incomplete:
       if (!isCompletedRef.current) {
-        e.preventDefault();
-        e.stopPropagation();
-
         if (e.deltaY > 0) {
-          // Scrolling down: play video
-          handleScrollActivity();
-        } else if (e.deltaY < -15) {
+          // Scrolling down: advance & play video
+          e.preventDefault();
+          e.stopPropagation();
+          handleScrollActivity(e.deltaY);
+        } else if (e.deltaY < -20) {
           // Scrolling up: pause video
           safePause();
         }
@@ -292,14 +314,14 @@ export default function HeroVideo({
       if (hasCompletedOnceRef.current) return;
 
       if (!isCompletedRef.current) {
-        e.preventDefault();
-        e.stopPropagation();
-
         if (e.touches && e.touches[0]) {
           const deltaY = touchStartYRef.current - e.touches[0].clientY;
-          if (deltaY > 4) {
-            handleScrollActivity();
-          } else if (deltaY < -15) {
+          if (deltaY > 15) {
+            e.preventDefault();
+            e.stopPropagation();
+            touchStartYRef.current = e.touches[0].clientY;
+            handleScrollActivity(deltaY);
+          } else if (deltaY < -25) {
             safePause();
           }
         }
@@ -307,9 +329,7 @@ export default function HeroVideo({
     };
 
     const onTouchEnd = () => {
-      if (!isCompletedRef.current) {
-        safePause();
-      }
+      // Natural inertia: do not abruptly pause on touch end
     };
 
     // Keyboard handlers (ArrowDown, PageDown, Space)
@@ -319,7 +339,7 @@ export default function HeroVideo({
 
       if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
         e.preventDefault();
-        handleScrollActivity();
+        handleScrollActivity(100);
       } else if (e.key === "ArrowUp" || e.key === "PageUp") {
         e.preventDefault();
         safePause();
@@ -532,18 +552,13 @@ export default function HeroVideo({
               <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 -rotate-90" />
             </button>
 
-            <a
-              href="#founders"
-              onClick={() => {
-                setScrollLock(false);
-                setIsCompleted(true);
-                isCompletedRef.current = true;
-                hasCompletedOnceRef.current = true;
-              }}
+            <button
+              type="button"
+              onClick={scrollToFounders}
               className="px-3.5 py-2.5 sm:px-5 sm:py-2.5 rounded-full border border-white/25 hover:border-[#D6A85C] bg-[#161a16]/80 hover:bg-[#D6A85C]/20 backdrop-blur-md text-[#F2F0E8] hover:text-[#D6A85C] text-[9.5px] sm:text-[10.5px] uppercase tracking-[0.14em] sm:tracking-[0.16em] font-medium transition-all duration-300 flex items-center justify-center cursor-pointer whitespace-nowrap"
             >
               {secondaryCtaText}
-            </a>
+            </button>
           </div>
         </div>
       </div>

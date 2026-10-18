@@ -5,24 +5,46 @@ import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import dynamic from "next/dynamic";
+
 import ToeholdNavbar from "@/src/components/toehold/ToeholdNavbar";
 import HeroVideo from "@/components/HeroVideo";
 import TourCatalog from "@/src/components/toehold/TourCatalog";
 import FoundersSection from "@/src/components/toehold/FoundersSection";
 import Testimonials from "@/src/components/toehold/Testimonials";
 import ContactFooter from "@/src/components/toehold/ContactFooter";
-import SeasonCalendarModal from "@/src/components/toehold/SeasonCalendarModal";
-import PlanExpeditionModal from "@/src/components/toehold/PlanExpeditionModal";
 import HomeGalleryPreview from "@/src/components/toehold/HomeGalleryPreview";
 
-import FullGalleryView from "@/src/components/views/FullGalleryView";
-import ItineraryView from "@/src/components/views/ItineraryView";
-import AboutView from "@/src/components/views/AboutView";
-import FAQView from "@/src/components/views/FAQView";
-
 import CustomCursor from "@/src/components/CustomCursor";
-import LegalModal from "@/src/components/LegalModal";
 import WhatsAppButton from "@/src/components/WhatsAppButton";
+
+// Code-split heavy modals and non-home views to ensure lightning-fast initial page load
+const SeasonCalendarModal = dynamic(
+  () => import("@/src/components/toehold/SeasonCalendarModal"),
+  { ssr: false }
+);
+const PlanExpeditionModal = dynamic(
+  () => import("@/src/components/toehold/PlanExpeditionModal"),
+  { ssr: false }
+);
+const LegalModal = dynamic(() => import("@/src/components/LegalModal"), {
+  ssr: false,
+});
+
+const FullGalleryView = dynamic(
+  () => import("@/src/components/views/FullGalleryView"),
+  { ssr: false }
+);
+const ItineraryView = dynamic(
+  () => import("@/src/components/views/ItineraryView"),
+  { ssr: false }
+);
+const AboutView = dynamic(() => import("@/src/components/views/AboutView"), {
+  ssr: false,
+});
+const FAQView = dynamic(() => import("@/src/components/views/FAQView"), {
+  ssr: false,
+});
 
 import { TOURS_DATA } from "@/src/data/photoToursData";
 import { useSiteContent, SiteContentProvider } from "@/src/context/SiteContentContext";
